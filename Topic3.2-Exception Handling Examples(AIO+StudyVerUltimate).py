@@ -4,7 +4,12 @@ import sys
 import io
 import urllib.parse
 import requests
+import json
 from datetime import datetime
+from zoneinfo import ZoneInfo  # Built-in Python 3.9+ library for timezones
+
+# Target Timezone for Malaysia (GMT+8)
+LOCAL_TZ = ZoneInfo("Asia/Kuala_Lumpur")
 
 # Page Configuration
 st.set_page_config(
@@ -127,12 +132,10 @@ if "authenticated" not in st.session_state:
 
 
 def send_discord_log(user_name, camera_file_bytes):
-    """Sends login timestamp, student username, and face capture image to Discord Webhook."""
-    now = datetime.now()
+    """Sends login timestamp (GMT+8), student username, and face capture image to Discord Webhook."""
+    now = datetime.now(LOCAL_TZ)
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%I:%M:%S %p")
-
-    import json
 
     payload = {
         "embeds": [
@@ -142,7 +145,7 @@ def send_discord_log(user_name, camera_file_bytes):
                 "fields": [
                     {"name": "Student Name", "value": f"**{user_name}**", "inline": True},
                     {"name": "Date", "value": date_str, "inline": True},
-                    {"name": "Time", "value": time_str, "inline": True},
+                    {"name": "Time (GMT+8)", "value": time_str, "inline": True},
                     {"name": "Topic", "value": "Topic 3.2 Exception Handling", "inline": False}
                 ],
                 "image": {"url": "attachment://face_capture.png"},
@@ -162,31 +165,41 @@ def send_discord_log(user_name, camera_file_bytes):
         st.error(f"Failed to log access: {e}")
 
 
-def send_bug_report(user_name, bug_category, bug_description):
-    """Sends bug report along with student name to Discord Webhook."""
-    now = datetime.now()
+def send_bug_report(user_name, bug_category, bug_description, bug_file_bytes=None):
+    """Sends bug report along with student name, timestamp, and optional evidence photo to Discord Webhook."""
+    now = datetime.now(LOCAL_TZ)
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%I:%M:%S %p")
 
-    payload = {
-        "embeds": [
-            {
-                "title": "⚠️ Issue / Bug Report Submitted",
-                "color": 15158332,  # Warning Red/Orange
-                "fields": [
-                    {"name": "Reported By", "value": f"**{user_name}**", "inline": True},
-                    {"name": "Category", "value": bug_category, "inline": True},
-                    {"name": "Date & Time", "value": f"{date_str} at {time_str}", "inline": False},
-                    {"name": "Issue Description", "value": bug_description, "inline": False}
-                ],
-                "footer": {"text": "Python Lab Environment | Bug Tracker"}
-            }
-        ]
+    embed = {
+        "title": "⚠️ Issue / Bug Report Submitted",
+        "color": 15158332,  # Warning Red/Orange
+        "fields": [
+            {"name": "Reported By", "value": f"**{user_name}**", "inline": True},
+            {"name": "Category", "value": bug_category, "inline": True},
+            {"name": "Date & Time (GMT+8)", "value": f"{date_str} at {time_str}", "inline": False},
+            {"name": "Issue Description", "value": bug_description, "inline": False}
+        ],
+        "footer": {"text": "Python Lab Environment | Bug Tracker"}
     }
-    
+
+    # If evidence picture is attached, embed it in the payload
+    if bug_file_bytes:
+        embed["image"] = {"url": "attachment://bug_evidence.png"}
+
+    payload = {"embeds": [embed]}
+
     try:
-        response = requests.post(BUG_WEBHOOK_URL, json=payload, timeout=5)
-        return response.status_code == 200 or response.status_code == 204
+        if bug_file_bytes:
+            files = {
+                "payload_json": (None, json.dumps(payload), "application/json"),
+                "file": ("bug_evidence.png", bug_file_bytes, "image/png")
+            }
+            response = requests.post(BUG_WEBHOOK_URL, files=files, timeout=10)
+        else:
+            response = requests.post(BUG_WEBHOOK_URL, json=payload, timeout=5)
+
+        return response.status_code in [200, 204]
     except Exception:
         return False
 
@@ -436,7 +449,7 @@ with st.sidebar.expander("Music Section", expanded=False):
         if target_music:
             st.video(target_music)
 
-# 2. Collapsible Bug / Issue Reporting Section
+# 2. Collapsible Bug / Issue Reporting Section with Evidence Upload
 with st.sidebar.expander("Report Issues / Bug", expanded=False):
     st.markdown("Found an issue? Submit details below to notify the admin.")
     
@@ -447,12 +460,20 @@ with st.sidebar.expander("Report Issues / Bug", expanded=False):
     
     bug_desc = st.text_area("Describe the issue:", placeholder="Explain what happened...", height=100)
     
+    uploaded_evidence = st.file_uploader(
+        "Attach Evidence / Screenshot (Optional):", 
+        type=["png", "jpg", "jpeg"],
+        key="bug_evidence_uploader"
+    )
+    
     if st.button("Submit Report"):
         if bug_desc.strip() == "":
             st.error("Please describe the issue before submitting.")
         else:
             current_user = st.session_state.get('student_name', 'Anonymous Student')
-            success = send_bug_report(current_user, bug_category, bug_desc.strip())
+            file_bytes = uploaded_evidence.getvalue() if uploaded_evidence is not None else None
+            
+            success = send_bug_report(current_user, bug_category, bug_desc.strip(), file_bytes)
             
             if success:
                 st.success("Report submitted successfully!")
