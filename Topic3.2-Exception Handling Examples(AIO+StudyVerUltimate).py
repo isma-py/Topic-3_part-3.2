@@ -5,53 +5,54 @@ import io
 # Page Configuration
 st.set_page_config(
     page_title="Topic 3.2 Exception Handling", 
-    page_icon="⚡", 
     layout="wide"
 )
 
-# Custom Cisco-Inspired CSS Theme & Mobile Responsive Rules
+# Custom Soft & Professional CSS Theme
 st.markdown("""
     <style>
-    /* Main Background & Fonts */
+    /* Main Background & Clean Typography */
     .main {
-        background-color: #F8FAFC;
+        background-color: #F7F9F8;
     }
     
-    /* Header & Subheader Colors */
-    h1 {
-        color: #002C6C !important;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-weight: 700;
-    }
-    h2, h3 {
-        color: #002C6C !important;
+    /* Header & Subheader Colors - Muted Slate */
+    h1, h2, h3 {
+        color: #2F3E46 !important;
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        font-weight: 600;
     }
     
-    /* Custom Sidebar Styling */
+    /* Sidebar Styling - Soft Slate Gray */
     section[data-testid="stSidebar"] {
-        background-color: #002C6C !important;
+        background-color: #354F52 !important;
     }
     section[data-testid="stSidebar"] * {
-        color: #FFFFFF !important;
+        color: #EDF2F4 !important;
     }
     
-    /* Custom Button Styling (Cisco Blue) */
+    /* Button Styling - Muted Sage Green */
     .stButton > button {
-        background-color: #00BCEB !important;
+        background-color: #52796F !important;
         color: #FFFFFF !important;
-        font-weight: 600;
-        border-radius: 6px;
+        font-weight: 500;
+        border-radius: 4px;
         border: none;
-        padding: 0.5rem 1rem;
-        transition: all 0.3s ease;
+        padding: 0.4rem 1rem;
+        transition: background-color 0.2s ease;
         width: 100%;
     }
     .stButton > button:hover {
-        background-color: #009DC8 !important;
-        box-shadow: 0 4px 12px rgba(0, 188, 235, 0.3);
+        background-color: #354F52 !important;
     }
 
-    /* Mobile Responsive Adjustments */
+    /* Input Field Adjustments */
+    .stTextInput input, .stTextArea textarea {
+        border-color: #CAD2C5 !important;
+        background-color: #FFFFFF !important;
+    }
+
+    /* Mobile Responsive Rules */
     @media (max-width: 768px) {
         .row-widget.stColumns {
             flex-direction: column !important;
@@ -65,7 +66,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Sidebar Navigation
-st.sidebar.title("⚡ Cisco Python Lab")
+st.sidebar.title("Python Lab Environment")
 st.sidebar.subheader("Topic 3.2 Exception Handling")
 demo_choice = st.sidebar.radio(
     "Select Module:",
@@ -134,7 +135,7 @@ if st.button("Check"):
     except:
         st.error("Invalid Input")"""
 
-            with st.expander("📖 View Reference Code", expanded=False):
+            with st.expander("View Reference Code", expanded=False):
                 st.code(ref_code_1, language="python")
 
     # --- RIGHT PANEL: TEST YOUR SELF ---
@@ -151,7 +152,7 @@ if st.button("Check"):
             if "d1_has_run" not in st.session_state:
                 st.session_state.d1_has_run = False
 
-            if st.button("▶ Run My Code", key="d1_run"):
+            if st.button("Run My Code", key="d1_run"):
                 st.session_state.d1_has_run = True
 
             st.markdown("**Output of your code:**")
@@ -160,7 +161,7 @@ if st.button("Check"):
                 if st.session_state.d1_has_run:
                     execute_and_render(user_code_1, st.container())
                 else:
-                    st.info("Click '▶ Run My Code' to view output inside this frame.")
+                    st.info("Click 'Run My Code' to view output inside this frame.")
 
 
 # =========================================================
@@ -204,7 +205,7 @@ if st.button("Check"):
     else:
         st.success("Age accepted")"""
 
-            with st.expander("📖 View Reference Code", expanded=False):
+            with st.expander("View Reference Code", expanded=False):
                 st.code(ref_code_2, language="python")
 
     # --- RIGHT PANEL: TEST YOUR SELF ---
@@ -221,7 +222,7 @@ if st.button("Check"):
             if "d2_has_run" not in st.session_state:
                 st.session_state.d2_has_run = False
 
-            if st.button("▶ Run My Code", key="d2_run"):
+            if st.button("Run My Code", key="d2_run"):
                 st.session_state.d2_has_run = True
 
             st.markdown("**Output of your code:**")
@@ -230,7 +231,7 @@ if st.button("Check"):
                 if st.session_state.d2_has_run:
                     execute_and_render(user_code_2, st.container())
                 else:
-                    st.info("Click '▶ Run My Code' to view output inside this frame.")
+                    st.info("Click 'Run My Code' to view output inside this frame.")
 
 
 # =========================================================
@@ -280,7 +281,7 @@ if st.button("Submit"):
     finally:
         st.write("Program End")"""
 
-            with st.expander("📖 View Reference Code", expanded=False):
+            with st.expander("View Reference Code", expanded=False):
                 st.code(ref_code_3, language="python")
 
     # --- RIGHT PANEL: TEST YOUR SELF ---
@@ -297,7 +298,7 @@ if st.button("Submit"):
             if "d3_has_run" not in st.session_state:
                 st.session_state.d3_has_run = False
 
-            if st.button("▶ Run My Code", key="d3_run"):
+            if st.button("Run My Code", key="d3_run"):
                 st.session_state.d3_has_run = True
 
             st.markdown("**Output of your code:**")
@@ -306,7 +307,7 @@ if st.button("Submit"):
                 if st.session_state.d3_has_run:
                     execute_and_render(user_code_3, st.container())
                 else:
-                    st.info("Click '▶ Run My Code' to view output inside this frame.")
+                    st.info("Click 'Run My Code' to view output inside this frame.")
 
 
 # =========================================================
@@ -359,7 +360,7 @@ if st.button("Submit"):
     finally:
         st.info("Done")"""
 
-            with st.expander("📖 View Reference Code", expanded=False):
+            with st.expander("View Reference Code", expanded=False):
                 st.code(ref_code_4, language="python")
 
     # --- RIGHT PANEL: TEST YOUR SELF ---
@@ -376,7 +377,7 @@ if st.button("Submit"):
             if "d4_has_run" not in st.session_state:
                 st.session_state.d4_has_run = False
 
-            if st.button("▶ Run My Code", key="d4_run"):
+            if st.button("Run My Code", key="d4_run"):
                 st.session_state.d4_has_run = True
 
             st.markdown("**Output of your code:**")
@@ -385,4 +386,4 @@ if st.button("Submit"):
                 if st.session_state.d4_has_run:
                     execute_and_render(user_code_4, st.container())
                 else:
-                    st.info("Click '▶ Run My Code' to view output inside this frame.")
+                    st.info("Click 'Run My Code' to view output inside this frame.")
