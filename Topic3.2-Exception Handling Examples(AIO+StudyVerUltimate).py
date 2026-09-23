@@ -12,8 +12,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# Discord Webhook Configuration
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1552364753605886092/M_01xSCjvxShmz_coHn3ywRnRn6PTqf-LOxeVQq2kn7Wy-zHnndI_doa64x7_sAhjF1B"
+# Discord Webhook Configurations
+LOGIN_WEBHOOK_URL = "https://discord.com/api/webhooks/1552364753605886092/M_01xSCjvxShmz_coHn3ywRnRn6PTqf-LOxeVQq2kn7Wy-zHnndI_doa64x7_sAhjF1B"
+BUG_WEBHOOK_URL = "https://discord.com/api/webhooks/1552366425706987552/2fmHmPjquJ9yPCa2Hgb6naZFB0gsE1UfPuiZlh1zO38EMsyQWQq1bcgWhol75jICe-v8"
 
 # Cisco Networking Academy Style Light Theme
 st.markdown("""
@@ -148,9 +149,38 @@ def send_discord_log(user_name):
     }
     
     try:
-        requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=5)
+        requests.post(LOGIN_WEBHOOK_URL, json=payload, timeout=5)
     except Exception as e:
         st.error(f"Failed to log access: {e}")
+
+
+def send_bug_report(user_name, bug_category, bug_description):
+    """Sends bug report along with student name to Discord Webhook."""
+    now = datetime.now()
+    date_str = now.strftime("%Y-%m-%d")
+    time_str = now.strftime("%I:%M:%S %p")
+
+    payload = {
+        "embeds": [
+            {
+                "title": "⚠️ Issue / Bug Report Submitted",
+                "color": 15158332,  # Warning Red/Orange
+                "fields": [
+                    {"name": "Reported By", "value": f"**{user_name}**", "inline": True},
+                    {"name": "Category", "value": bug_category, "inline": True},
+                    {"name": "Date & Time", "value": f"{date_str} at {time_str}", "inline": False},
+                    {"name": "Issue Description", "value": bug_description, "inline": False}
+                ],
+                "footer": {"text": "Python Lab Environment | Bug Tracker"}
+            }
+        ]
+    }
+    
+    try:
+        response = requests.post(BUG_WEBHOOK_URL, json=payload, timeout=5)
+        return response.status_code == 200 or response.status_code == 204
+    except Exception:
+        return False
 
 
 # =========================================================
@@ -200,7 +230,7 @@ def execute_and_render(user_code, output_container):
         sys.stdout = sys.__stdout__
 
 
-# Sidebar Navigation & Collapsible Music Section
+# Sidebar Navigation & Collapsible Sections
 st.sidebar.title("Python Lab Environment")
 st.sidebar.caption(f"Logged in as: **{st.session_state.get('student_name', 'Student')}**")
 st.sidebar.subheader("Topic 3.2 Exception Handling")
@@ -217,8 +247,8 @@ demo_choice = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 
-# Collapsible Music Section
-with st.sidebar.expander("Music Section", expanded=True):
+# 1. Collapsible Music Section
+with st.sidebar.expander("Music Section", expanded=False):
     music_mode = st.radio(
         "Select Source:",
         ["Preset Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
@@ -390,6 +420,29 @@ with st.sidebar.expander("Music Section", expanded=True):
         target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=kvprs8s-qI8")
         if target_music:
             st.video(target_music)
+
+# 2. Collapsible Bug / Issue Reporting Section
+with st.sidebar.expander("Report Issues / Bug", expanded=False):
+    st.markdown("Found an issue? Submit details below to notify the admin.")
+    
+    bug_category = st.selectbox(
+        "Issue Type:",
+        ["General Bug", "Audio / Player Issue", "Code Execution Error", "Interface Formatting", "Other"]
+    )
+    
+    bug_desc = st.text_area("Describe the issue:", placeholder="Explain what happened...", height=100)
+    
+    if st.button("Submit Report"):
+        if bug_desc.strip() == "":
+            st.error("Please describe the issue before submitting.")
+        else:
+            current_user = st.session_state.get('student_name', 'Anonymous Student')
+            success = send_bug_report(current_user, bug_category, bug_desc.strip())
+            
+            if success:
+                st.success("Report submitted successfully!")
+            else:
+                st.error("Failed to send report. Please try again.")
 
 st.sidebar.markdown("---")
 st.sidebar.caption("DFK50083 Python Programming\nTopic 3.0: GUI Design & Exception Handling")
