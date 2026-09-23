@@ -147,11 +147,16 @@ if "last_bug_report_time" not in st.session_state:
     st.session_state.last_bug_report_time = None
 
 
-@st.dialog("Notice")
+@st.dialog("Important Notice")
 def show_light_mode_dialog():
     st.write(
         "Please ensure your browser settings are adjusted properly for the best "
         "visual display and interface performance before proceeding."
+    )
+    st.warning(
+        "**Progress Tracking Notice:** This webpage does **not** have a database to store "
+        "your progress or code inputs. Please remember to log or record your progress "
+        "manually if needed!"
     )
     if st.button("I Understand & Proceed"):
         st.session_state.show_light_mode_modal = False
