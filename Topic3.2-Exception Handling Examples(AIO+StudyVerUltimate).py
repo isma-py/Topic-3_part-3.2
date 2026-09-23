@@ -141,21 +141,67 @@ with st.sidebar.expander("Music Section", expanded=True):
         key="music_mode_radio"
     )
 
-    # Integrated Volume Slider
-    volume_level = st.slider("Speaker Volume", min_value=0, max_value=100, value=80, step=5, help="Adjust playback volume")
-
     if music_mode == "Preset Track":
-        music_urls = {
-            "oneheart x reidenshi - snowfall": "https://www.youtube.com/watch?v=LlN8MPS7KQs",
-            "hozuki - time": "https://www.youtube.com/watch?v=kvprs8s-qI8"
-        }
+        # YouTube Video IDs for playlist sequence
+        preset_tracks = [
+            {"title": "oneheart x reidenshi - snowfall", "id": "LlN8MPS7KQs"},
+            {"title": "hozuki - time", "id": "kvprs8s-qI8"}
+        ]
 
         music_selection = st.selectbox(
             "Choose Track:",
-            list(music_urls.keys())
+            options=range(len(preset_tracks)),
+            format_func=lambda i: preset_tracks[i]["title"]
         )
 
-        st.video(music_urls[music_selection])
+        selected_id = preset_tracks[music_selection]["id"]
+        
+        # Build playlist IDs starting from the selected track to enable auto-next
+        playlist_ids = ",".join([track["id"] for track in preset_tracks[music_selection:]])
+
+        # YouTube IFrame API Embed for working Volume Control, Autoplay, & Auto-next
+        player_html = f"""
+        <div style="width: 100%;">
+            <div id="player"></div>
+            <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; font-family: sans-serif; color: #334155;">Volume:</span>
+                <input id="volSlider" type="range" min="0" max="100" value="80" style="width: 100%; accent-color: #6CC24A;">
+            </div>
+        </div>
+        <script>
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            var player;
+            function onYouTubeIframeAPIReady() {{
+                player = new YT.Player('player', {{
+                    height: '180',
+                    width: '100%',
+                    videoId: '{selected_id}',
+                    playerVars: {{
+                        'autoplay': 1,
+                        'playlist': '{playlist_ids}',
+                        'playsinline': 1
+                    }},
+                    events: {{
+                        'onReady': onPlayerReady
+                    }}
+                }});
+            }}
+
+            function onPlayerReady(event) {{
+                event.target.setVolume(80);
+                event.target.playVideo();
+                
+                document.getElementById('volSlider').addEventListener('input', function() {{
+                    player.setVolume(this.value);
+                }});
+            }}
+        </script>
+        """
+        components.html(player_html, height=235)
 
     elif music_mode == "Search Music / Artist":
         search_query = st.text_input("Search Song or Artist:", "reidenshi")
