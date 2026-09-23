@@ -3,12 +3,17 @@ import streamlit.components.v1 as components
 import sys
 import io
 import urllib.parse
+import requests
+from datetime import datetime
 
 # Page Configuration
 st.set_page_config(
     page_title="Topic 3.2 Exception Handling", 
     layout="wide"
 )
+
+# Discord Webhook Configuration
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1552364753605886092/M_01xSCjvxShmz_coHn3ywRnRn6PTqf-LOxeVQq2kn7Wy-zHnndI_doa64x7_sAhjF1B"
 
 # Cisco Networking Academy Style Light Theme
 st.markdown("""
@@ -115,10 +120,89 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Session State Access Verification
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+
+def send_discord_log(user_name):
+    """Sends login timestamp and username to Discord Webhook."""
+    now = datetime.now()
+    date_str = now.strftime("%Y-%m-%d")
+    time_str = now.strftime("%I:%M:%S %p")
+
+    payload = {
+        "embeds": [
+            {
+                "title": "🔑 Lab Environment Access Log",
+                "color": 7127626,  # Cisco Green #6CC24A
+                "fields": [
+                    {"name": "Student Name", "value": f"**{user_name}**", "inline": True},
+                    {"name": "Date", "value": date_str, "inline": True},
+                    {"name": "Time", "value": time_str, "inline": True},
+                    {"name": "Topic", "value": "Topic 3.2 Exception Handling", "inline": False}
+                ],
+                "footer": {"text": "Python Lab Environment | DFK50083"}
+            }
+        ]
+    }
+    
+    try:
+        requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=5)
+    except Exception as e:
+        st.error(f"Failed to log access: {e}")
+
+
 # =========================================================
+# LOGIN GATEKEEPER SCREEN
+# =========================================================
+if not st.session_state.authenticated:
+    _, col_main, _ = st.columns([1, 2, 1])
+    
+    with col_main:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.title("Python Lab Access Gateway")
+            st.markdown("Please enter your name to register your attendance and access the lab environment.")
+            
+            student_name = st.text_input("Full Name:", key="student_name_input", placeholder="e.g. John Doe")
+            
+            if st.button("Enter Lab"):
+                if student_name.strip() == "":
+                    st.error("Please enter your name before proceeding.")
+                else:
+                    send_discord_log(student_name.strip())
+                    st.session_state.authenticated = True
+                    st.session_state.student_name = student_name.strip()
+                    st.rerun()
+
+    st.stop()
+
+
+# =========================================================
+# MAIN APP ENVIRONMENT (REACHABLE ONLY AFTER LOGIN)
+# =========================================================
+
+# Helper function to execute custom user code inside a container
+def execute_and_render(user_code, output_container):
+    buffer = io.StringIO()
+    sys.stdout = buffer
+    try:
+        with output_container:
+            exec_globals = {"st": st}
+            exec(user_code, exec_globals)
+            output = buffer.getvalue()
+            if output:
+                st.text_area("Console Output:", output, height=100)
+    except Exception as e:
+        output_container.error(f"Execution Error: {e}")
+    finally:
+        sys.stdout = sys.__stdout__
+
+
 # Sidebar Navigation & Collapsible Music Section
-# =========================================================
 st.sidebar.title("Python Lab Environment")
+st.sidebar.caption(f"Logged in as: **{st.session_state.get('student_name', 'Student')}**")
 st.sidebar.subheader("Topic 3.2 Exception Handling")
 
 demo_choice = st.sidebar.radio(
@@ -160,7 +244,7 @@ with st.sidebar.expander("Music Section", expanded=True):
         selected_id = preset_tracks[music_selection]["id"]
         playlist_ids = ",".join([track["id"] for track in preset_tracks[music_selection:]])
 
-        # HTML player with matched font style and auto-fitted height
+        # HTML Player with Persisted Volume Control via localStorage
         player_html = f"""
         <div style="width: 100%;">
             <div id="player"></div>
@@ -225,6 +309,11 @@ with st.sidebar.expander("Music Section", expanded=True):
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
             var player;
+            
+            // Retrieve stored volume level or default to 0.8
+            var storedVolume = localStorage.getItem('globalPlayerVolume');
+            var initialVol = storedVolume !== null ? parseFloat(storedVolume) : 0.8;
+
             function onYouTubeIframeAPIReady() {{
                 player = new YT.Player('player', {{
                     height: '170',
@@ -236,23 +325,42 @@ with st.sidebar.expander("Music Section", expanded=True):
                         'playsinline': 1
                     }},
                     events: {{
-                        'onReady': onPlayerReady
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
                     }}
                 }});
             }}
 
+            function applyVolume(val) {{
+                if (player && player.setVolume) {{
+                    player.setVolume(val * 100);
+                }}
+                const slider = document.getElementById('volumeSlider');
+                if (slider) {{
+                    slider.value = val;
+                    let perc = Math.round(val * 100);
+                    slider.style.setProperty('--vol-fill', perc + '%');
+                }}
+            }}
+
             function onPlayerReady(event) {{
-                event.target.setVolume(80);
+                applyVolume(initialVol);
                 event.target.playVideo();
                 
                 const slider = document.getElementById('volumeSlider');
                 slider.addEventListener('input', function() {{
                     let val = this.value;
-                    player.setVolume(val * 100);
-                    
-                    let perc = Math.round(val * 100);
-                    this.style.setProperty('--vol-fill', perc + '%');
+                    localStorage.setItem('globalPlayerVolume', val);
+                    applyVolume(val);
                 }});
+            }}
+
+            function onPlayerStateChange(event) {{
+                // Re-apply stored volume when next track plays
+                var currentVol = localStorage.getItem('globalPlayerVolume');
+                if (currentVol !== null) {{
+                    applyVolume(parseFloat(currentVol));
+                }}
             }}
         </script>
         """
@@ -288,25 +396,8 @@ st.sidebar.caption("DFK50083 Python Programming\nTopic 3.0: GUI Design & Excepti
 st.sidebar.markdown("**Created by IsmaPY**")
 
 
-# Helper function to execute custom user code inside a container
-def execute_and_render(user_code, output_container):
-    buffer = io.StringIO()
-    sys.stdout = buffer
-    try:
-        with output_container:
-            exec_globals = {"st": st}
-            exec(user_code, exec_globals)
-            output = buffer.getvalue()
-            if output:
-                st.text_area("Console Output:", output, height=100)
-    except Exception as e:
-        output_container.error(f"Execution Error: {e}")
-    finally:
-        sys.stdout = sys.__stdout__
-
-
 # =========================================================
-# Demo 1: Basic Try-Except
+# Demo Modules
 # =========================================================
 if demo_choice == "1. Basic Try-Except":
     st.title("Try Except Example")
@@ -319,7 +410,6 @@ if demo_choice == "1. Basic Try-Except":
     
     col_left, col_right = st.columns(2)
     
-    # --- LEFT PANEL: THE CODE ---
     with col_left:
         with st.container(border=True):
             st.subheader("The Code")
@@ -345,16 +435,10 @@ if st.button("Check"):
             with st.expander("View Reference Code", expanded=False):
                 st.code(ref_code_1, language="python")
 
-    # --- RIGHT PANEL: TEST YOUR SELF ---
     with col_right:
         with st.container(border=True):
             st.subheader("Test Your Self")
-            user_code_1 = st.text_area(
-                "Your Code",
-                value="",
-                height=180,
-                key="d1_sandbox"
-            )
+            user_code_1 = st.text_area("Your Code", value="", height=180, key="d1_sandbox")
             
             if "d1_has_run" not in st.session_state:
                 st.session_state.d1_has_run = False
@@ -370,10 +454,6 @@ if st.button("Check"):
                 else:
                     st.info("Click 'Run My Code' to view output inside this frame.")
 
-
-# =========================================================
-# Demo 2: Age Checker (Else Clause)
-# =========================================================
 elif demo_choice == "2. Age Checker (Else Clause)":
     st.title("Age Checker")
     st.markdown(
@@ -385,7 +465,6 @@ elif demo_choice == "2. Age Checker (Else Clause)":
     
     col_left, col_right = st.columns(2)
     
-    # --- LEFT PANEL: THE CODE ---
     with col_left:
         with st.container(border=True):
             st.subheader("The Code")
@@ -415,16 +494,10 @@ if st.button("Check"):
             with st.expander("View Reference Code", expanded=False):
                 st.code(ref_code_2, language="python")
 
-    # --- RIGHT PANEL: TEST YOUR SELF ---
     with col_right:
         with st.container(border=True):
             st.subheader("Test Your Self")
-            user_code_2 = st.text_area(
-                "Your Code",
-                value="",
-                height=200,
-                key="d2_sandbox"
-            )
+            user_code_2 = st.text_area("Your Code", value="", height=200, key="d2_sandbox")
             
             if "d2_has_run" not in st.session_state:
                 st.session_state.d2_has_run = False
@@ -440,10 +513,6 @@ if st.button("Check"):
                 else:
                     st.info("Click 'Run My Code' to view output inside this frame.")
 
-
-# =========================================================
-# Demo 3: Name Submission (Finally Clause)
-# =========================================================
 elif demo_choice == "3. Name Submission (Finally Clause)":
     st.title("Try Except Else Finally")
     st.markdown(
@@ -455,7 +524,6 @@ elif demo_choice == "3. Name Submission (Finally Clause)":
     
     col_left, col_right = st.columns(2)
     
-    # --- LEFT PANEL: THE CODE ---
     with col_left:
         with st.container(border=True):
             st.subheader("The Code")
@@ -491,16 +559,10 @@ if st.button("Submit"):
             with st.expander("View Reference Code", expanded=False):
                 st.code(ref_code_3, language="python")
 
-    # --- RIGHT PANEL: TEST YOUR SELF ---
     with col_right:
         with st.container(border=True):
             st.subheader("Test Your Self")
-            user_code_3 = st.text_area(
-                "Your Code",
-                value="",
-                height=240,
-                key="d3_sandbox"
-            )
+            user_code_3 = st.text_area("Your Code", value="", height=240, key="d3_sandbox")
             
             if "d3_has_run" not in st.session_state:
                 st.session_state.d3_has_run = False
@@ -516,10 +578,6 @@ if st.button("Submit"):
                 else:
                     st.info("Click 'Run My Code' to view output inside this frame.")
 
-
-# =========================================================
-# Demo 4: Email Validation (Custom Exception)
-# =========================================================
 elif demo_choice == "4. Email Validation (Custom Exception)":
     st.title("Email Validation")
     st.markdown(
@@ -530,7 +588,6 @@ elif demo_choice == "4. Email Validation (Custom Exception)":
     
     col_left, col_right = st.columns(2)
     
-    # --- LEFT PANEL: THE CODE ---
     with col_left:
         with st.container(border=True):
             st.subheader("The Code")
@@ -570,16 +627,10 @@ if st.button("Submit"):
             with st.expander("View Reference Code", expanded=False):
                 st.code(ref_code_4, language="python")
 
-    # --- RIGHT PANEL: TEST YOUR SELF ---
     with col_right:
         with st.container(border=True):
             st.subheader("Test Your Self")
-            user_code_4 = st.text_area(
-                "Your Code",
-                value="",
-                height=260,
-                key="d4_sandbox"
-            )
+            user_code_4 = st.text_area("Your Code", value="", height=260, key="d4_sandbox")
             
             if "d4_has_run" not in st.session_state:
                 st.session_state.d4_has_run = False
