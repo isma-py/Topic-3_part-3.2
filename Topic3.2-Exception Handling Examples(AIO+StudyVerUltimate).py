@@ -116,7 +116,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================================
-# Sidebar Navigation & Music Section
+# Sidebar Navigation & Collapsible Music Section
 # =========================================================
 st.sidebar.title("Python Lab Environment")
 st.sidebar.subheader("Topic 3.2 Exception Handling")
@@ -133,56 +133,64 @@ demo_choice = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 
-# Music Section Header
-st.sidebar.subheader("Music Section")
-
-music_mode = st.sidebar.radio(
-    "Select Source:",
-    ["Preset Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
-    key="music_mode_radio"
-)
-
-if music_mode == "Preset Track":
-    music_selection = st.sidebar.selectbox(
-        "Choose Ambience:",
-        [
-            "Lofi Hip Hop Radio (24/7 Focus)",
-            "Smooth Jazz Cafe",
-            "Gentle Rain & Piano"
-        ]
+# Collapsible Music Section (Expander allows background playback while collapsed)
+with st.sidebar.expander("🎵 Music Section", expanded=True):
+    music_mode = st.radio(
+        "Select Source:",
+        ["Preset Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
+        key="music_mode_radio"
     )
-    music_urls = {
-        "Lofi Hip Hop Radio (24/7 Focus)": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-        "Smooth Jazz Cafe": "https://www.youtube.com/watch?v=Dx5qFachd3A",
-        "Gentle Rain & Piano": "https://www.youtube.com/watch?v=2OEL4P1Rz04"
-    }
-    st.sidebar.video(music_urls[music_selection])
 
-elif music_mode == "Search Music / Artist":
-    search_query = st.sidebar.text_input("Search Song or Artist:", "reidenshi")
-    if search_query:
-        encoded_query = urllib.parse.quote(search_query)
-        yt_search_url = f"https://www.youtube.com/results?search_query={encoded_query}"
-        ytm_search_url = f"https://music.youtube.com/search?q={encoded_query}"
-        
-        st.sidebar.markdown(f"**Search Results for '{search_query}':**")
-        st.sidebar.link_button("▶ Open on YouTube", yt_search_url)
-        st.sidebar.link_button("🎵 Open on YouTube Music", ytm_search_url)
+    if music_mode == "Preset Track":
+        music_urls = {
+            # --- reidenshi & ambient / drift phonk classics ---
+            "øneheart x reidenshi - snowfall": "https://www.youtube.com/watch?v=LLA2I9RAt0s",
+            "reidenshi - memory reel": "https://www.youtube.com/watch?v=R94J7G3-VbU",
+            "reidenshi - lost in thought": "https://www.youtube.com/watch?v=845b4B1uM1E",
+            
+            # --- antent ---
+            "antent - pulse": "https://www.youtube.com/watch?v=9g2sU6cZ1vQ",
+            "antent - rain inside": "https://www.youtube.com/watch?v=K3f2T-xT5pU",
+            "antent - horizon": "https://www.youtube.com/watch?v=3-E7o-yS9gA",
+            
+            # --- popular focus & ambient study music ---
+            "Lofi Hip Hop Radio (24/7 Focus Beats)": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+            "Smooth Jazz Cafe Mix": "https://www.youtube.com/watch?v=Dx5qFachd3A",
+            "Gentle Rain & Soft Piano": "https://www.youtube.com/watch?v=2OEL4P1Rz04",
+            "Kina - get you the moon (Ambient Lofi)": "https://www.youtube.com/watch?v=33K16R40O90"
+        }
 
-elif music_mode == "Spotify Player":
-    spotify_url = st.sidebar.text_input(
-        "Paste Spotify Track/Playlist Link:", 
-        "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT"
-    )
-    if spotify_url:
-        embed_spotify = spotify_url.replace("open.spotify.com/", "open.spotify.com/embed/")
-        with st.sidebar:
+        music_selection = st.selectbox(
+            "Choose Track:",
+            list(music_urls.keys())
+        )
+
+        st.video(music_urls[music_selection])
+
+    elif music_mode == "Search Music / Artist":
+        search_query = st.text_input("Search Song or Artist:", "reidenshi")
+        if search_query:
+            encoded_query = urllib.parse.quote(search_query)
+            yt_search_url = f"https://www.youtube.com/results?search_query={encoded_query}"
+            ytm_search_url = f"https://music.youtube.com/search?q={encoded_query}"
+            
+            st.markdown(f"**Search Results for '{search_query}':**")
+            st.link_button("▶ Open on YouTube", yt_search_url)
+            st.link_button("🎵 Open on YouTube Music", ytm_search_url)
+
+    elif music_mode == "Spotify Player":
+        spotify_url = st.text_input(
+            "Paste Spotify Track/Playlist Link:", 
+            "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT"
+        )
+        if spotify_url:
+            embed_spotify = spotify_url.replace("open.spotify.com/", "open.spotify.com/embed/")
             components.iframe(embed_spotify, height=152)
 
-elif music_mode == "Custom YouTube URL":
-    target_music = st.sidebar.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=jfKfPfyJRdk")
-    if target_music:
-        st.sidebar.video(target_music)
+    elif music_mode == "Custom YouTube URL":
+        target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=LLA2I9RAt0s")
+        if target_music:
+            st.video(target_music)
 
 st.sidebar.markdown("---")
 st.sidebar.caption("DFK50083 Python Programming\nTopic 3.0: GUI Design & Exception Handling")
@@ -485,7 +493,7 @@ if st.button("Submit"):
             if "d4_has_run" not in st.session_state:
                 st.session_state.d4_has_run = False
 
-            if st.button("Run My Code", key="d1_run"):
+            if st.button("Run My Code", key="d4_run"):
                 st.session_state.d4_has_run = True
 
             st.markdown("**Output of your code:**")
