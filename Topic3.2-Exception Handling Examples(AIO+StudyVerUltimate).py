@@ -6,7 +6,7 @@ import io
 st.set_page_config(
     page_title="Topic 3.2 Exception Handling", 
     page_icon="🐍", 
-    layout="wide"  # Wide layout gives full space for two side-by-side columns
+    layout="wide"
 )
 
 # Sidebar Navigation
@@ -47,12 +47,18 @@ def execute_and_render(user_code, output_container):
 # =========================================================
 if demo_choice == "1. Basic Try-Except":
     st.title("Try Except Example")
+    st.markdown(
+        "**Explanation:** The `try` block tests a block of code for runtime errors, "
+        "while the `except` block catches and handles errors (such as entering invalid text "
+        "when converting to an integer) to prevent the program from crashing."
+    )
+    st.markdown("---")
     
     col_left, col_right = st.columns(2)
     
-    # --- LEFT COLUMN: LIVE ORIGINAL APP ---
+    # --- LEFT COLUMN: THE CODE & REFERENCE CODE ---
     with col_left:
-        st.subheader("1. Original Live App")
+        st.subheader("The Code")
         num = st.text_input("Enter a number", key="d1_num")
         if st.button("Check", key="d1_btn"):
             try:
@@ -60,9 +66,7 @@ if demo_choice == "1. Basic Try-Except":
             except:
                 st.error("Invalid Input")
 
-    # --- RIGHT COLUMN: PRACTICE SANDBOX ---
-    with col_right:
-        st.subheader("2. Practice Sandbox")
+        st.markdown("---")
         ref_code_1 = """import streamlit as st
 
 st.title("Try Except Example")
@@ -74,6 +78,12 @@ if st.button("Check"):
     except:
         st.error("Invalid Input")"""
 
+        with st.expander("📖 View Reference Code", expanded=False):
+            st.code(ref_code_1, language="python")
+
+    # --- RIGHT COLUMN: PRACTICE SANDBOX ---
+    with col_right:
+        st.subheader("Practice Sandbox")
         user_code_1 = st.text_area(
             "Type your Python / Streamlit code here:",
             value=ref_code_1,
@@ -81,7 +91,6 @@ if st.button("Check"):
             key="d1_sandbox"
         )
         
-        # Save execution state to keep output visible across button clicks
         if "d1_has_run" not in st.session_state:
             st.session_state.d1_has_run = False
 
@@ -89,13 +98,13 @@ if st.button("Check"):
             st.session_state.d1_has_run = True
 
         st.markdown("**Output of your code:**")
-        output_box = st.container()
-        if st.session_state.d1_has_run:
-            execute_and_render(user_code_1, output_box)
-
-        st.markdown("---")
-        with st.expander("📖 View Reference Code", expanded=False):
-            st.code(ref_code_1, language="python")
+        
+        # Square Framed Output Container
+        with st.container(border=True):
+            if st.session_state.d1_has_run:
+                execute_and_render(user_code_1, st.container())
+            else:
+                st.info("Click '▶ Run My Code' to view output inside this frame.")
 
 
 # =========================================================
@@ -103,12 +112,18 @@ if st.button("Check"):
 # =========================================================
 elif demo_choice == "2. Age Checker (Else Clause)":
     st.title("Age Checker")
+    st.markdown(
+        "**Explanation:** The `else` clause executes **only if no errors occurred** inside "
+        "the `try` block. In this example, if integer conversion succeeds, the `else` block "
+        "triggers the success message."
+    )
+    st.markdown("---")
     
     col_left, col_right = st.columns(2)
     
-    # --- LEFT COLUMN: LIVE ORIGINAL APP ---
+    # --- LEFT COLUMN: THE CODE & REFERENCE CODE ---
     with col_left:
-        st.subheader("1. Original Live App")
+        st.subheader("The Code")
         age = st.text_input("Enter your age", key="d2_age")
         if st.button("Check", key="d2_btn"):
             try:
@@ -118,9 +133,7 @@ elif demo_choice == "2. Age Checker (Else Clause)":
             else:
                 st.success("Age accepted")
 
-    # --- RIGHT COLUMN: PRACTICE SANDBOX ---
-    with col_right:
-        st.subheader("2. Practice Sandbox")
+        st.markdown("---")
         ref_code_2 = """import streamlit as st
 
 st.title("Age Checker")
@@ -134,6 +147,12 @@ if st.button("Check"):
     else:
         st.success("Age accepted")"""
 
+        with st.expander("📖 View Reference Code", expanded=False):
+            st.code(ref_code_2, language="python")
+
+    # --- RIGHT COLUMN: PRACTICE SANDBOX ---
+    with col_right:
+        st.subheader("Practice Sandbox")
         user_code_2 = st.text_area(
             "Type your Python / Streamlit code here:",
             value=ref_code_2,
@@ -148,13 +167,13 @@ if st.button("Check"):
             st.session_state.d2_has_run = True
 
         st.markdown("**Output of your code:**")
-        output_box = st.container()
-        if st.session_state.d2_has_run:
-            execute_and_render(user_code_2, output_box)
-
-        st.markdown("---")
-        with st.expander("📖 View Reference Code", expanded=False):
-            st.code(ref_code_2, language="python")
+        
+        # Square Framed Output Container
+        with st.container(border=True):
+            if st.session_state.d2_has_run:
+                execute_and_render(user_code_2, st.container())
+            else:
+                st.info("Click '▶ Run My Code' to view output inside this frame.")
 
 
 # =========================================================
@@ -162,12 +181,18 @@ if st.button("Check"):
 # =========================================================
 elif demo_choice == "3. Name Submission (Finally Clause)":
     st.title("Try Except Else Finally")
+    st.markdown(
+        "**Explanation:** The `finally` clause **always runs** regardless of whether an exception "
+        "was raised or caught. It is commonly used for cleanup actions, such as closing files "
+        "or logging 'Program End'."
+    )
+    st.markdown("---")
     
     col_left, col_right = st.columns(2)
     
-    # --- LEFT COLUMN: LIVE ORIGINAL APP ---
+    # --- LEFT COLUMN: THE CODE & REFERENCE CODE ---
     with col_left:
-        st.subheader("1. Original Live App")
+        st.subheader("The Code")
         name = st.text_input("Enter your name", key="d3_name")
         if st.button("Submit", key="d3_btn"):
             try:
@@ -180,9 +205,7 @@ elif demo_choice == "3. Name Submission (Finally Clause)":
             finally:
                 st.write("Program End")
 
-    # --- RIGHT COLUMN: PRACTICE SANDBOX ---
-    with col_right:
-        st.subheader("2. Practice Sandbox")
+        st.markdown("---")
         ref_code_3 = """import streamlit as st
 
 st.title("Try Except Else Finally")
@@ -199,6 +222,12 @@ if st.button("Submit"):
     finally:
         st.write("Program End")"""
 
+        with st.expander("📖 View Reference Code", expanded=False):
+            st.code(ref_code_3, language="python")
+
+    # --- RIGHT COLUMN: PRACTICE SANDBOX ---
+    with col_right:
+        st.subheader("Practice Sandbox")
         user_code_3 = st.text_area(
             "Type your Python / Streamlit code here:",
             value=ref_code_3,
@@ -213,13 +242,13 @@ if st.button("Submit"):
             st.session_state.d3_has_run = True
 
         st.markdown("**Output of your code:**")
-        output_box = st.container()
-        if st.session_state.d3_has_run:
-            execute_and_render(user_code_3, output_box)
-
-        st.markdown("---")
-        with st.expander("📖 View Reference Code", expanded=False):
-            st.code(ref_code_3, language="python")
+        
+        # Square Framed Output Container
+        with st.container(border=True):
+            if st.session_state.d3_has_run:
+                execute_and_render(user_code_3, st.container())
+            else:
+                st.info("Click '▶ Run My Code' to view output inside this frame.")
 
 
 # =========================================================
@@ -227,12 +256,17 @@ if st.button("Submit"):
 # =========================================================
 elif demo_choice == "4. Email Validation (Custom Exception)":
     st.title("Email Validation")
+    st.markdown(
+        "**Explanation:** Python allows raising custom exceptions manually using `raise ValueError('message')`. "
+        "The `except ValueError as e` block captures the exact error message string and displays it using Streamlit."
+    )
+    st.markdown("---")
     
     col_left, col_right = st.columns(2)
     
-    # --- LEFT COLUMN: LIVE ORIGINAL APP ---
+    # --- LEFT COLUMN: THE CODE & REFERENCE CODE ---
     with col_left:
-        st.subheader("1. Original Live App")
+        st.subheader("The Code")
         email = st.text_input("Enter Email", key="d4_email")
         if st.button("Submit", key="d4_btn"):
             try:
@@ -247,9 +281,7 @@ elif demo_choice == "4. Email Validation (Custom Exception)":
             finally:
                 st.info("Done")
 
-    # --- RIGHT COLUMN: PRACTICE SANDBOX ---
-    with col_right:
-        st.subheader("2. Practice Sandbox")
+        st.markdown("---")
         ref_code_4 = """import streamlit as st
 
 st.title("Email Validation")
@@ -268,6 +300,12 @@ if st.button("Submit"):
     finally:
         st.info("Done")"""
 
+        with st.expander("📖 View Reference Code", expanded=False):
+            st.code(ref_code_4, language="python")
+
+    # --- RIGHT COLUMN: PRACTICE SANDBOX ---
+    with col_right:
+        st.subheader("Practice Sandbox")
         user_code_4 = st.text_area(
             "Type your Python / Streamlit code here:",
             value=ref_code_4,
@@ -282,10 +320,10 @@ if st.button("Submit"):
             st.session_state.d4_has_run = True
 
         st.markdown("**Output of your code:**")
-        output_box = st.container()
-        if st.session_state.d4_has_run:
-            execute_and_render(user_code_4, output_box)
-
-        st.markdown("---")
-        with st.expander("📖 View Reference Code", expanded=False):
-            st.code(ref_code_4, language="python")
+        
+        # Square Framed Output Container
+        with st.container(border=True):
+            if st.session_state.d4_has_run:
+                execute_and_render(user_code_4, st.container())
+            else:
+                st.info("Click '▶ Run My Code' to view output inside this frame.")
