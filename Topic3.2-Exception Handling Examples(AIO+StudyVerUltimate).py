@@ -5,7 +5,7 @@ import io
 import urllib.parse
 import requests
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo  # Built-in Python 3.9+ library for timezones
 
 # Target Timezone for Malaysia (GMT+8)
@@ -133,16 +133,16 @@ if "authenticated" not in st.session_state:
 if "show_light_mode_modal" not in st.session_state:
     st.session_state.show_light_mode_modal = False
 
+if "last_login_time" not in st.session_state:
+    st.session_state.last_login_time = None
 
-@st.dialog("☀️ Theme Notice")
+
+@st.dialog("Notice")
 def show_light_mode_dialog():
-    st.markdown("### Please Use Light Mode")
     st.write(
-        "To ensure all code elements, containers, and Cisco Academy themes display "
-        "with accurate color contrast and layout formatting, please make sure your "
-        "Streamlit or browser theme is set to **Light Mode**."
+        "Please ensure your browser settings are adjusted properly for the best "
+        "visual display and interface performance before proceeding."
     )
-    st.info("💡 Tip: Click the '⋮' menu in the top-right corner → Settings → Theme → Light.")
     if st.button("I Understand & Proceed"):
         st.session_state.show_light_mode_modal = False
         st.rerun()
@@ -157,7 +157,7 @@ def send_discord_log(user_name, camera_file_bytes):
     payload = {
         "embeds": [
             {
-                "title": "🔑 Lab Access & Attendance Log",
+                "title": "Lab Access & Attendance Log",
                 "color": 7127626,  # Cisco Green #6CC24A
                 "fields": [
                     {"name": "Student Name", "value": f"**{user_name}**", "inline": True},
@@ -189,7 +189,7 @@ def send_bug_report(user_name, bug_category, bug_description, bug_file_bytes=Non
     time_str = now.strftime("%I:%M:%S %p")
 
     embed = {
-        "title": "⚠️ Issue / Bug Report Submitted",
+        "title": "Issue / Bug Report Submitted",
         "color": 15158332,  # Warning Red/Orange
         "fields": [
             {"name": "Reported By", "value": f"**{user_name}**", "inline": True},
@@ -230,7 +230,7 @@ if not st.session_state.authenticated:
         st.markdown("<br>", unsafe_allow_html=True)
         with st.container(border=True):
             st.title("Python Lab Access Gateway")
-            st.markdown("Please enter your full name and take a face photo to verify attendance and unlock the environment.")
+            st.markdown("Please enter your full name and take a face photo to verify attendance to log in")
             
             student_name = st.text_input("Full Name:", key="student_name_input", placeholder="e.g. John Doe")
             
@@ -238,14 +238,19 @@ if not st.session_state.authenticated:
             camera_photo = st.camera_input("Take a photo to proceed", key="login_camera_input")
             
             if st.button("Enter Lab"):
+                now = datetime.now(LOCAL_TZ)
                 if student_name.strip() == "":
                     st.error("Please enter your name before proceeding.")
                 elif camera_photo is None:
                     st.error("Face capture is required! Please click 'Take Photo' above.")
+                elif st.session_state.last_login_time is not None and (now - st.session_state.last_login_time) < timedelta(minutes=1):
+                    remaining_seconds = int(60 - (now - st.session_state.last_login_time).total_seconds())
+                    st.error(f"Please wait {remaining_seconds} seconds before trying to log in again to prevent submission spam.")
                 else:
                     file_bytes = camera_photo.getvalue()
                     send_discord_log(student_name.strip(), file_bytes)
                     
+                    st.session_state.last_login_time = now
                     st.session_state.authenticated = True
                     st.session_state.student_name = student_name.strip()
                     st.session_state.show_light_mode_modal = True  # Trigger modal upon login
@@ -254,7 +259,7 @@ if not st.session_state.authenticated:
     st.stop()
 
 
-# Trigger Light Mode Reminder Dialog if user just logged in
+# Trigger Reminder Dialog if user just logged in
 if st.session_state.show_light_mode_modal:
     show_light_mode_dialog()
 
