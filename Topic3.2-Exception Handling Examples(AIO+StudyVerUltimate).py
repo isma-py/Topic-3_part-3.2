@@ -8,96 +8,96 @@ st.set_page_config(
     layout="wide"
 )
 
-# Soft & Warm Dark Mode CSS for Eye Strain Relief
+# Cisco Networking Academy Style Light Theme
 st.markdown("""
     <style>
-    /* Global Page Background & Text - Soft Slate Mocha */
+    /* Global Page Background & Text - Light Theme */
     html, body, [data-testid="stAppViewContainer"], .stApp {
-        background-color: #181825 !important;
-        color: #CDD6F4 !important;
+        background-color: #F8FAFC !important;
+        color: #121820 !important;
     }
     
-    /* Header Area */
+    /* Header Banner */
     [data-testid="stHeader"] {
-        background-color: #181825 !important;
+        background-color: #F8FAFC !important;
     }
 
-    /* Soft Headings */
+    /* Headings - Cisco Dark Charcoal */
     h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
-        color: #F5E0DC !important;
+        color: #121820 !important;
         font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-        font-weight: 600;
+        font-weight: 700;
     }
 
-    /* Paragraphs & Secondary Text */
+    /* Paragraphs & Labels */
     p, label, span, div, .stMarkdown {
-        color: #BAC2DE !important;
+        color: #334155 !important;
     }
     
     /* Sidebar Styling */
     section[data-testid="stSidebar"] {
-        background-color: #11111B !important;
-        border-right: 1px solid #313244;
+        background-color: #FFFFFF !important;
+        border-right: 1px solid #E2E8F0;
     }
     section[data-testid="stSidebar"] * {
-        color: #CDD6F4 !important;
+        color: #121820 !important;
     }
     
-    /* Containers / Cards */
+    /* Frame Cards / Containers */
     div[data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #1E1E2E !important;
-        border: 1px solid #313244 !important;
-        border-radius: 10px !important;
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
-    /* Code Inputs & Text Areas */
+    /* Inputs & Text Areas */
     .stTextInput input, .stTextArea textarea {
-        background-color: #181825 !important;
-        color: #CDD6F4 !important;
-        border: 1px solid #45475A !important;
+        background-color: #FFFFFF !important;
+        color: #121820 !important;
+        border: 1px solid #CBD5E1 !important;
         border-radius: 8px !important;
         font-family: 'Fira Code', 'Courier New', monospace !important;
     }
     .stTextInput input:focus, .stTextArea textarea:focus {
-        border-color: #89B4FA !important;
-        box-shadow: 0 0 0 1px #89B4FA !important;
+        border-color: #6CC24A !important;
+        box-shadow: 0 0 0 2px rgba(108, 194, 74, 0.2) !important;
     }
 
-    /* Code & Expander Accordions */
+    /* Code & Expander Styling */
     .stExpander {
-        background-color: #181825 !important;
-        border: 1px solid #313244 !important;
+        background-color: #F8FAFC !important;
+        border: 1px solid #E2E8F0 !important;
         border-radius: 8px !important;
     }
 
-    /* Soft Accent Buttons */
+    /* Cisco Signature Green Buttons */
     .stButton > button {
-        background-color: #313244 !important;
-        color: #A6E3A1 !important;
+        background-color: #6CC24A !important;
+        color: #FFFFFF !important;
         font-weight: 600;
         border-radius: 8px;
-        border: 1px solid #45475A;
-        padding: 0.4rem 1rem;
+        border: none;
+        padding: 0.5rem 1rem;
         transition: all 0.2s ease;
         width: 100%;
     }
     .stButton > button:hover {
-        background-color: #45475A !important;
-        color: #B4BEFE !important;
-        border-color: #585B70 !important;
+        background-color: #58A63B !important;
+        color: #FFFFFF !important;
     }
 
     /* Footer Branding */
     .footer-text {
         text-align: center;
-        color: #6C7086 !important;
+        color: #64748B !important;
         font-size: 0.85rem;
         margin-top: 2rem;
         padding-top: 1rem;
-        border-top: 1px solid #313244;
+        border-top: 1px solid #E2E8F0;
     }
 
-    /* Mobile Responsive Rules */
+    /* Responsive Mobile Layout */
     @media (max-width: 768px) {
         .row-widget.stColumns {
             flex-direction: column !important;
@@ -110,9 +110,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Sidebar Navigation
+# =========================================================
+# Sidebar Navigation & Study Music Player
+# =========================================================
 st.sidebar.title("Python Lab Environment")
 st.sidebar.subheader("Topic 3.2 Exception Handling")
+
 demo_choice = st.sidebar.radio(
     "Select Module:",
     [
@@ -124,8 +127,37 @@ demo_choice = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
+
+# Study Music Player Area
+st.sidebar.subheader("Focus Study Music")
+music_selection = st.sidebar.selectbox(
+    "Choose Track / Ambience:",
+    [
+        "Lofi Hip Hop Radio (24/7 Focus)",
+        "Smooth Jazz Cafe",
+        "Gentle Rain & Piano",
+        "Custom YouTube URL"
+    ]
+)
+
+music_urls = {
+    "Lofi Hip Hop Radio (24/7 Focus)": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+    "Smooth Jazz Cafe": "https://www.youtube.com/watch?v=Dx5qFachd3A",
+    "Gentle Rain & Piano": "https://www.youtube.com/watch?v=2OEL4P1Rz04"
+}
+
+if music_selection == "Custom YouTube URL":
+    target_music = st.sidebar.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=jfKfPfyJRdk")
+else:
+    target_music = music_urls[music_selection]
+
+if target_music:
+    st.sidebar.video(target_music)
+
+st.sidebar.markdown("---")
 st.sidebar.caption("DFK50083 Python Programming\nTopic 3.0: GUI Design & Exception Handling")
 st.sidebar.markdown("**Created by IsmaPY**")
+
 
 # Helper function to execute custom user code inside a container
 def execute_and_render(user_code, output_container):
