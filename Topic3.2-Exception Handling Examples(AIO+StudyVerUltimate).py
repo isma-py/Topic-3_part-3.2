@@ -102,6 +102,13 @@ st.markdown("""
         background-color: #58A63B !important;
         color: #FFFFFF !important;
     }
+    
+    /* Disabled Button Style */
+    .stButton > button:disabled {
+        background-color: #CBD5E1 !important;
+        color: #64748B !important;
+        cursor: not-allowed !important;
+    }
 
     /* Footer Branding */
     .footer-text {
@@ -135,6 +142,9 @@ if "show_light_mode_modal" not in st.session_state:
 
 if "last_login_time" not in st.session_state:
     st.session_state.last_login_time = None
+
+if "last_bug_report_time" not in st.session_state:
+    st.session_state.last_bug_report_time = None
 
 
 @st.dialog("Notice")
@@ -237,15 +247,25 @@ if not st.session_state.authenticated:
             st.markdown("**Face Verification Capture:**")
             camera_photo = st.camera_input("Take a photo to proceed", key="login_camera_input")
             
-            if st.button("Enter Lab"):
+            # Check if login is currently under a 3-minute cooldown
+            now_login = datetime.now(LOCAL_TZ)
+            login_on_cooldown = False
+            login_remaining = 0
+            if st.session_state.last_login_time is not None:
+                elapsed = (now_login - st.session_state.last_login_time).total_seconds()
+                if elapsed < 180:  # 3 minutes = 180 seconds
+                    login_on_cooldown = True
+                    login_remaining = int(180 - elapsed)
+
+            if login_on_cooldown:
+                st.warning(f"Submission locked. Please wait {login_remaining // 60}m {login_remaining % 60}s before logging in again.")
+
+            if st.button("Enter Lab", disabled=login_on_cooldown):
                 now = datetime.now(LOCAL_TZ)
                 if student_name.strip() == "":
                     st.error("Please enter your name before proceeding.")
                 elif camera_photo is None:
                     st.error("Face capture is required! Please click 'Take Photo' above.")
-                elif st.session_state.last_login_time is not None and (now - st.session_state.last_login_time) < timedelta(minutes=1):
-                    remaining_seconds = int(60 - (now - st.session_state.last_login_time).total_seconds())
-                    st.error(f"Please wait {remaining_seconds} seconds before trying to log in again to prevent submission spam.")
                 else:
                     file_bytes = camera_photo.getvalue()
                     send_discord_log(student_name.strip(), file_bytes)
@@ -472,7 +492,7 @@ with st.sidebar.expander("Music Section", expanded=False):
         if target_music:
             st.video(target_music)
 
-# 2. Collapsible Bug / Issue Reporting Section with Evidence Upload
+# 2. Collapsible Bug / Issue Reporting Section with Evidence Upload & Cooldown
 with st.sidebar.expander("Report Issues / Bug", expanded=False):
     st.markdown("Found an issue? Submit details below to notify Isma.")
     
@@ -489,7 +509,21 @@ with st.sidebar.expander("Report Issues / Bug", expanded=False):
         key="bug_evidence_uploader"
     )
     
-    if st.button("Submit Report"):
+    # Check if bug report is currently under a 3-minute cooldown
+    now_bug = datetime.now(LOCAL_TZ)
+    bug_on_cooldown = False
+    bug_remaining = 0
+    if st.session_state.last_bug_report_time is not None:
+        elapsed_bug = (now_bug - st.session_state.last_bug_report_time).total_seconds()
+        if elapsed_bug < 180:  # 3 minutes = 180 seconds
+            bug_on_cooldown = True
+            bug_remaining = int(180 - elapsed_bug)
+
+    if bug_on_cooldown:
+        st.warning(f"Report locked. Please wait {bug_remaining // 60}m {bug_remaining % 60}s before submitting another report.")
+
+    if st.button("Submit Report", disabled=bug_on_cooldown):
+        now = datetime.now(LOCAL_TZ)
         if bug_desc.strip() == "":
             st.error("Please describe the issue before submitting.")
         else:
@@ -499,7 +533,9 @@ with st.sidebar.expander("Report Issues / Bug", expanded=False):
             success = send_bug_report(current_user, bug_category, bug_desc.strip(), file_bytes)
             
             if success:
+                st.session_state.last_bug_report_time = now
                 st.success("Report submitted successfully!")
+                st.rerun()
             else:
                 st.error("Failed to send report. Please try again.")
 
