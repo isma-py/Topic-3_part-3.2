@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 import io
+import urllib.parse
 
 # Page Configuration
 st.set_page_config(
@@ -111,7 +112,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================================
-# Sidebar Navigation & Study Music Player
+# Sidebar Navigation & Music Section
 # =========================================================
 st.sidebar.title("Python Lab Environment")
 st.sidebar.subheader("Topic 3.2 Exception Handling")
@@ -128,31 +129,42 @@ demo_choice = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 
-# Study Music Player Area
-st.sidebar.subheader("Focus Study Music")
-music_selection = st.sidebar.selectbox(
-    "Choose Track / Ambience:",
-    [
-        "Lofi Hip Hop Radio (24/7 Focus)",
-        "Smooth Jazz Cafe",
-        "Gentle Rain & Piano",
-        "Custom YouTube URL"
-    ]
+# Music Section Header
+st.sidebar.subheader("Music Section")
+
+music_mode = st.sidebar.radio(
+    "Select Source:",
+    ["Preset Track", "Search Music / Artist", "Custom YouTube URL"],
+    key="music_mode_radio"
 )
 
-music_urls = {
-    "Lofi Hip Hop Radio (24/7 Focus)": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-    "Smooth Jazz Cafe": "https://www.youtube.com/watch?v=Dx5qFachd3A",
-    "Gentle Rain & Piano": "https://www.youtube.com/watch?v=2OEL4P1Rz04"
-}
+if music_mode == "Preset Track":
+    music_selection = st.sidebar.selectbox(
+        "Choose Ambience:",
+        [
+            "Lofi Hip Hop Radio (24/7 Focus)",
+            "Smooth Jazz Cafe",
+            "Gentle Rain & Piano"
+        ]
+    )
+    music_urls = {
+        "Lofi Hip Hop Radio (24/7 Focus)": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+        "Smooth Jazz Cafe": "https://www.youtube.com/watch?v=Dx5qFachd3A",
+        "Gentle Rain & Piano": "https://www.youtube.com/watch?v=2OEL4P1Rz04"
+    }
+    st.sidebar.video(music_urls[music_selection])
 
-if music_selection == "Custom YouTube URL":
+elif music_mode == "Search Music / Artist":
+    search_query = st.sidebar.text_input("Search Song or Artist:", "Lofi study beats")
+    if search_query:
+        encoded_query = urllib.parse.quote(search_query)
+        embed_url = f"https://www.youtube.com/embed?listType=search&list={encoded_query}"
+        st.sidebar.components.v1.iframe(embed_url, height=200)
+
+elif music_mode == "Custom YouTube URL":
     target_music = st.sidebar.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=jfKfPfyJRdk")
-else:
-    target_music = music_urls[music_selection]
-
-if target_music:
-    st.sidebar.video(target_music)
+    if target_music:
+        st.sidebar.video(target_music)
 
 st.sidebar.markdown("---")
 st.sidebar.caption("DFK50083 Python Programming\nTopic 3.0: GUI Design & Exception Handling")
