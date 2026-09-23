@@ -133,8 +133,8 @@ demo_choice = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 
-# Collapsible Music Section (Expander allows background playback while collapsed)
-with st.sidebar.expander("🎵 Music Section", expanded=True):
+# Collapsible Music Section
+with st.sidebar.expander("Music Section", expanded=True):
     music_mode = st.radio(
         "Select Source:",
         ["Preset Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
@@ -144,7 +144,7 @@ with st.sidebar.expander("🎵 Music Section", expanded=True):
     if music_mode == "Preset Track":
         music_urls = {
             # --- reidenshi & ambient / drift phonk classics ---
-            "øneheart x reidenshi - snowfall": "https://www.youtube.com/watch?v=LLA2I9RAt0s",
+            "oneheart x reidenshi - snowfall": "https://www.youtube.com/watch?v=LLA2I9RAt0s",
             "reidenshi - memory reel": "https://www.youtube.com/watch?v=R94J7G3-VbU",
             "reidenshi - lost in thought": "https://www.youtube.com/watch?v=845b4B1uM1E",
             
@@ -175,8 +175,8 @@ with st.sidebar.expander("🎵 Music Section", expanded=True):
             ytm_search_url = f"https://music.youtube.com/search?q={encoded_query}"
             
             st.markdown(f"**Search Results for '{search_query}':**")
-            st.link_button("▶ Open on YouTube", yt_search_url)
-            st.link_button("🎵 Open on YouTube Music", ytm_search_url)
+            st.link_button("Open on YouTube", yt_search_url)
+            st.link_button("Open on YouTube Music", ytm_search_url)
 
     elif music_mode == "Spotify Player":
         spotify_url = st.text_input(
