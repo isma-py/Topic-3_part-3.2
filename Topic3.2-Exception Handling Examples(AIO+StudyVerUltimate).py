@@ -8,35 +8,68 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Soft & Professional CSS Theme
+# Custom High-Contrast CSS Theme (Fixed for Dark Mode & Light Mode)
 st.markdown("""
     <style>
-    /* Main Background & Clean Typography */
-    .main {
-        background-color: #F7F9F8;
+    /* Main App Background */
+    .stApp {
+        background-color: #0F172A !important;
     }
     
-    /* Header & Subheader Colors - Muted Slate */
-    h1, h2, h3 {
-        color: #2F3E46 !important;
+    /* Main Headers - Bright Crisp White */
+    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        color: #F8FAFC !important;
         font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         font-weight: 600;
     }
+
+    /* Paragraph & Label Text */
+    p, label, span, .stMarkdown {
+        color: #E2E8F0 !important;
+    }
     
-    /* Sidebar Styling - Soft Slate Gray */
+    /* Sidebar Styling - Soft Muted Teal */
     section[data-testid="stSidebar"] {
-        background-color: #354F52 !important;
+        background-color: #1E293B !important;
+        border-right: 1px solid #334155;
     }
     section[data-testid="stSidebar"] * {
-        color: #EDF2F4 !important;
+        color: #F1F5F9 !important;
     }
     
+    /* Framed Container Boxes */
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #182232 !important;
+        border: 1px solid #334155 !important;
+        border-radius: 8px !important;
+    }
+
+    /* Input Fields & Text Area Code Box (Fixed White-on-White Bug) */
+    .stTextInput input, .stTextArea textarea {
+        background-color: #0F172A !important;
+        color: #F8FAFC !important;
+        border: 1px solid #475569 !important;
+        border-radius: 6px !important;
+        font-family: 'Fira Code', 'Courier New', monospace !important;
+    }
+    .stTextInput input:focus, .stTextArea textarea:focus {
+        border-color: #52796F !important;
+        box-shadow: 0 0 0 1px #52796F !important;
+    }
+
+    /* Expander / Reference Code Styling */
+    .stExpander {
+        background-color: #0F172A !important;
+        border: 1px solid #334155 !important;
+        border-radius: 6px !important;
+    }
+
     /* Button Styling - Muted Sage Green */
     .stButton > button {
         background-color: #52796F !important;
         color: #FFFFFF !important;
-        font-weight: 500;
-        border-radius: 4px;
+        font-weight: 600;
+        border-radius: 6px;
         border: none;
         padding: 0.4rem 1rem;
         transition: background-color 0.2s ease;
@@ -44,12 +77,7 @@ st.markdown("""
     }
     .stButton > button:hover {
         background-color: #354F52 !important;
-    }
-
-    /* Input Field Adjustments */
-    .stTextInput input, .stTextArea textarea {
-        border-color: #CAD2C5 !important;
-        background-color: #FFFFFF !important;
+        color: #FFFFFF !important;
     }
 
     /* Mobile Responsive Rules */
