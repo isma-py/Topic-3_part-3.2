@@ -137,35 +137,13 @@ st.sidebar.markdown("---")
 with st.sidebar.expander("Music Section", expanded=True):
     music_mode = st.radio(
         "Select Source:",
-        ["Preset Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
+        ["Live Station", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
         key="music_mode_radio"
     )
 
-    if music_mode == "Preset Track":
-        music_urls = {
-            # --- reidenshi & ambient / drift phonk classics ---
-            "oneheart x reidenshi - snowfall": "https://www.youtube.com/watch?v=LLA2I9RAt0s",
-            "reidenshi - memory reel": "https://www.youtube.com/watch?v=R94J7G3-VbU",
-            "reidenshi - lost in thought": "https://www.youtube.com/watch?v=845b4B1uM1E",
-            
-            # --- antent ---
-            "antent - pulse": "https://www.youtube.com/watch?v=9g2sU6cZ1vQ",
-            "antent - rain inside": "https://www.youtube.com/watch?v=K3f2T-xT5pU",
-            "antent - horizon": "https://www.youtube.com/watch?v=3-E7o-yS9gA",
-            
-            # --- popular focus & ambient study music ---
-            "Lofi Hip Hop Radio (24/7 Focus Beats)": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-            "Smooth Jazz Cafe Mix": "https://www.youtube.com/watch?v=Dx5qFachd3A",
-            "Gentle Rain & Soft Piano": "https://www.youtube.com/watch?v=2OEL4P1Rz04",
-            "Kina - get you the moon (Ambient Lofi)": "https://www.youtube.com/watch?v=33K16R40O90"
-        }
-
-        music_selection = st.selectbox(
-            "Choose Track:",
-            list(music_urls.keys())
-        )
-
-        st.video(music_urls[music_selection])
+    if music_mode == "Live Station":
+        st.caption("Live Stream Radio")
+        st.video("https://www.youtube.com/live/QmAbRBjcbY4")
 
     elif music_mode == "Search Music / Artist":
         search_query = st.text_input("Search Song or Artist:", "reidenshi")
@@ -188,7 +166,7 @@ with st.sidebar.expander("Music Section", expanded=True):
             components.iframe(embed_spotify, height=152)
 
     elif music_mode == "Custom YouTube URL":
-        target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=LLA2I9RAt0s")
+        target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/live/QmAbRBjcbY4")
         if target_music:
             st.video(target_music)
 
