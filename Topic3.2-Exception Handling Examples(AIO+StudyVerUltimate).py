@@ -160,15 +160,13 @@ with st.sidebar.expander("Music Section", expanded=True):
         selected_id = preset_tracks[music_selection]["id"]
         playlist_ids = ",".join([track["id"] for track in preset_tracks[music_selection:]])
 
-        # Clean Volume Slider without percentage count
+        # HTML player with matched font style and auto-fitted height
         player_html = f"""
         <div style="width: 100%;">
             <div id="player"></div>
             
             <div class="clean-volume-box">
-                <div class="clean-volume-label">
-                    <span>Volume</span>
-                </div>
+                <div class="clean-volume-label">Volume</div>
                 <input 
                     type="range" 
                     id="volumeSlider" 
@@ -182,13 +180,14 @@ with st.sidebar.expander("Music Section", expanded=True):
 
         <style>
           .clean-volume-box {{
-            margin-top: 10px;
-            padding: 8px 0px;
+            margin-top: 12px;
+            padding: 0px;
           }}
 
           .clean-volume-label {{
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
             color: #334155;
             margin-bottom: 6px;
           }}
@@ -257,7 +256,7 @@ with st.sidebar.expander("Music Section", expanded=True):
             }}
         </script>
         """
-        components.html(player_html, height=210)
+        components.html(player_html, height=260)
 
     elif music_mode == "Search Music / Artist":
         search_query = st.text_input("Search Song or Artist:", "reidenshi")
