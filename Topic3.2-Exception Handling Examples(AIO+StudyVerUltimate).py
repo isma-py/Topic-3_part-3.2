@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Cisco Networking Academy Style Light Theme with Audio Dashboard Styling
+# Cisco Networking Academy Style Light Theme
 st.markdown("""
     <style>
     /* Global Page Background & Text - Light Theme */
@@ -142,7 +142,6 @@ with st.sidebar.expander("Music Section", expanded=True):
     )
 
     if music_mode == "Preset Track":
-        # Complete track list including all newly provided links
         preset_tracks = [
             {"title": "øneheart x reidenshi - snowfall", "id": "LlN8MPS7KQs"},
             {"title": "hozuki - time", "id": "kvprs8s-qI8"},
@@ -159,71 +158,51 @@ with st.sidebar.expander("Music Section", expanded=True):
         )
 
         selected_id = preset_tracks[music_selection]["id"]
-        
-        # Build playlist IDs sequence starting from the selected choice for continuous loop/next progression
         playlist_ids = ",".join([track["id"] for track in preset_tracks[music_selection:]])
 
-        # Professional YouTube Player Integration with Professional Slider & Auto-Title Sync
+        # Clean & Minimalist Volume Control UI
         player_html = f"""
         <div style="width: 100%;">
             <div id="player"></div>
             
-            <!-- Professional Audio Console Slider Panel -->
-            <div class="volume-control-panel">
-              <div class="volume-header">
-                <span class="volume-label">MASTER LEVEL</span>
-                <span id="dbDisplay" class="db-readout">-1.9 dB</span>
-              </div>
-              
-              <div class="slider-wrapper">
-                <input 
-                  type="range" 
-                  id="volumeSlider" 
-                  min="0" 
-                  max="1" 
-                  step="0.01" 
-                  value="0.8" 
-                />
-                <div class="slider-ticks">
-                  <span>-∞</span>
-                  <span>-12dB</span>
-                  <span>-6dB</span>
-                  <span>0dB</span>
+            <!-- Clean & Simple Speaker Level Slider -->
+            <div class="clean-volume-box">
+                <div class="clean-volume-label">
+                    <span>🔊 Speaker Level</span>
+                    <span id="volPercent" class="vol-val">80%</span>
                 </div>
-              </div>
+                <input 
+                    type="range" 
+                    id="volumeSlider" 
+                    min="0" 
+                    max="1" 
+                    step="0.01" 
+                    value="0.8" 
+                />
             </div>
         </div>
 
         <style>
-          .volume-control-panel {{
-            background: rgba(240, 244, 248, 0.95);
-            border: 1px solid #CBD5E1;
-            padding: 12px 14px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          .clean-volume-box {{
             margin-top: 10px;
+            padding: 10px 12px;
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
           }}
 
-          .volume-header {{
+          .clean-volume-label {{
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #475569;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #334155;
             margin-bottom: 6px;
           }}
 
-          .db-readout {{
-            color: #16a34a;
-            font-family: monospace;
-            font-size: 0.75rem;
-            font-weight: 600;
-          }}
-
-          .slider-wrapper {{
-            position: relative;
+          .vol-val {{
+            color: #6CC24A;
+            font-weight: 700;
           }}
 
           input[type="range"]#volumeSlider {{
@@ -231,41 +210,28 @@ with st.sidebar.expander("Music Section", expanded=True):
             width: 100%;
             height: 6px;
             border-radius: 3px;
-            background: linear-gradient(to right, #16a34a var(--volume-perc, 80%), #E2E8F0 var(--volume-perc, 80%));
+            background: linear-gradient(to right, #6CC24A var(--vol-fill, 80%), #E2E8F0 var(--vol-fill, 80%));
             outline: none;
             cursor: pointer;
           }}
 
           input[type="range"]#volumeSlider::-webkit-slider-thumb {{
             -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            border: 2px solid #16a34a;
+            background: #6CC24A;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
             transition: transform 0.1s ease;
           }}
 
           input[type="range"]#volumeSlider::-webkit-slider-thumb:hover {{
-            transform: scale(1.1);
-          }}
-
-          .slider-ticks {{
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.6rem;
-            color: #94A3B8;
-            margin-top: 4px;
-            font-family: monospace;
+            transform: scale(1.15);
           }}
         </style>
 
         <script>
-            var tracks = {str([t["id"] for t in preset_tracks])};
-            var trackTitles = {str([t["title"] for t in preset_tracks])};
-            var initialIndex = {music_selection};
-
             var tag = document.createElement('script');
             tag.src = "https://www.youtube.com/iframe_api";
             var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -283,8 +249,7 @@ with st.sidebar.expander("Music Section", expanded=True):
                         'playsinline': 1
                     }},
                     events: {{
-                        'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange
+                        'onReady': onPlayerReady
                     }}
                 }});
             }}
@@ -298,31 +263,14 @@ with st.sidebar.expander("Music Section", expanded=True):
                     let val = this.value;
                     player.setVolume(val * 100);
                     
-                    // Update track fill gradient
-                    let perc = val * 100;
-                    this.style.setProperty('--volume-perc', perc + '%');
-                    
-                    // DB calculation
-                    let db = val == 0 ? "-∞" : (20 * Math.log10(val)).toFixed(1);
-                    document.getElementById('dbDisplay').innerText = db + " dB";
+                    let perc = Math.round(val * 100);
+                    this.style.setProperty('--vol-fill', perc + '%');
+                    document.getElementById('volPercent').innerText = perc + "%";
                 }});
-            }}
-
-            function onPlayerStateChange(event) {{
-                // When a video starts playing, sync the selectbox / track label if updated via playlist autoplay
-                if (event.data == YT.PlayerState.PLAYING) {{
-                    let currentVideoId = player.getVideoData().video_id;
-                    let realIndex = tracks.indexOf(currentVideoId);
-                    if (realIndex !== -1 && window.parent.document) {{
-                        // Finds matching selectbox elements inside Streamlit frame if applicable
-                        let selectInputs = window.parent.document.querySelectorAll('div[data-baseweb="select"]');
-                        // Automated tracking synchronization hook
-                    }}
-                }}
             }}
         </script>
         """
-        components.html(player_html, height=270)
+        components.html(player_html, height=235)
 
     elif music_mode == "Search Music / Artist":
         search_query = st.text_input("Search Song or Artist:", "reidenshi")
