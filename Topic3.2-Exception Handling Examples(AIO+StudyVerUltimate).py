@@ -74,17 +74,20 @@ st.markdown("""
     }
 
     /* Cisco Signature Green Buttons */
-    .stButton > button {
+    .stButton > button, .stLinkButton > a {
         background-color: #6CC24A !important;
         color: #FFFFFF !important;
-        font-weight: 600;
-        border-radius: 8px;
-        border: none;
-        padding: 0.5rem 1rem;
-        transition: all 0.2s ease;
-        width: 100%;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        border: none !important;
+        padding: 0.5rem 1rem !important;
+        transition: all 0.2s ease !important;
+        width: 100% !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        display: block !important;
     }
-    .stButton > button:hover {
+    .stButton > button:hover, .stLinkButton > a:hover {
         background-color: #58A63B !important;
         color: #FFFFFF !important;
     }
@@ -135,7 +138,7 @@ st.sidebar.subheader("Music Section")
 
 music_mode = st.sidebar.radio(
     "Select Source:",
-    ["Preset Track", "Search Music / Artist", "Custom YouTube URL"],
+    ["Preset Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
     key="music_mode_radio"
 )
 
@@ -156,12 +159,25 @@ if music_mode == "Preset Track":
     st.sidebar.video(music_urls[music_selection])
 
 elif music_mode == "Search Music / Artist":
-    search_query = st.sidebar.text_input("Search Song or Artist:", "Lofi study beats")
+    search_query = st.sidebar.text_input("Search Song or Artist:", "reidenshi")
     if search_query:
         encoded_query = urllib.parse.quote(search_query)
-        embed_url = f"https://www.youtube.com/embed?listType=search&list={encoded_query}"
+        yt_search_url = f"https://www.youtube.com/results?search_query={encoded_query}"
+        ytm_search_url = f"https://music.youtube.com/search?q={encoded_query}"
+        
+        st.sidebar.markdown(f"**Search Results for '{search_query}':**")
+        st.sidebar.link_button("▶ Open on YouTube", yt_search_url)
+        st.sidebar.link_button("🎵 Open on YouTube Music", ytm_search_url)
+
+elif music_mode == "Spotify Player":
+    spotify_url = st.sidebar.text_input(
+        "Paste Spotify Track/Playlist Link:", 
+        "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT"
+    )
+    if spotify_url:
+        embed_spotify = spotify_url.replace("open.spotify.com/", "open.spotify.com/embed/")
         with st.sidebar:
-            components.iframe(embed_url, height=210)
+            components.iframe(embed_spotify, height=152)
 
 elif music_mode == "Custom YouTube URL":
     target_music = st.sidebar.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=jfKfPfyJRdk")
@@ -469,7 +485,7 @@ if st.button("Submit"):
             if "d4_has_run" not in st.session_state:
                 st.session_state.d4_has_run = False
 
-            if st.button("Run My Code", key="d4_run"):
+            if st.button("Run My Code", key="d1_run"):
                 st.session_state.d4_has_run = True
 
             st.markdown("**Output of your code:**")
