@@ -160,7 +160,7 @@ with st.sidebar.expander("Music Section", expanded=True):
         selected_id = preset_tracks[music_selection]["id"]
         playlist_ids = ",".join([track["id"] for track in preset_tracks[music_selection:]])
 
-        # Clean & Minimalist Volume Slider
+        # Clean Volume Slider without percentage count
         player_html = f"""
         <div style="width: 100%;">
             <div id="player"></div>
@@ -168,7 +168,6 @@ with st.sidebar.expander("Music Section", expanded=True):
             <div class="clean-volume-box">
                 <div class="clean-volume-label">
                     <span>Volume</span>
-                    <span id="volPercent" class="vol-val">80%</span>
                 </div>
                 <input 
                     type="range" 
@@ -188,17 +187,10 @@ with st.sidebar.expander("Music Section", expanded=True):
           }}
 
           .clean-volume-label {{
-            display: flex;
-            justify-content: space-between;
             font-size: 0.8rem;
             font-weight: 600;
             color: #334155;
             margin-bottom: 6px;
-          }}
-
-          .vol-val {{
-            color: #6CC24A;
-            font-weight: 700;
           }}
 
           input[type="range"]#volumeSlider {{
@@ -261,12 +253,11 @@ with st.sidebar.expander("Music Section", expanded=True):
                     
                     let perc = Math.round(val * 100);
                     this.style.setProperty('--vol-fill', perc + '%');
-                    document.getElementById('volPercent').innerText = perc + "%";
                 }});
             }}
         </script>
         """
-        components.html(player_html, height=220)
+        components.html(player_html, height=210)
 
     elif music_mode == "Search Music / Artist":
         search_query = st.text_input("Search Song or Artist:", "reidenshi")
