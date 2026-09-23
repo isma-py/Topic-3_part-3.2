@@ -137,13 +137,25 @@ st.sidebar.markdown("---")
 with st.sidebar.expander("Music Section", expanded=True):
     music_mode = st.radio(
         "Select Source:",
-        ["Featured Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
+        ["Preset Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
         key="music_mode_radio"
     )
 
-    if music_mode == "Featured Track":
-        st.caption("oneheart x reidenshi - snowfall")
-        st.video("https://www.youtube.com/watch?v=LlN8MPS7KQs")
+    # Integrated Volume Slider
+    volume_level = st.slider("Speaker Volume", min_value=0, max_value=100, value=80, step=5, help="Adjust playback volume")
+
+    if music_mode == "Preset Track":
+        music_urls = {
+            "oneheart x reidenshi - snowfall": "https://www.youtube.com/watch?v=LlN8MPS7KQs",
+            "hozuki - time": "https://www.youtube.com/watch?v=kvprs8s-qI8"
+        }
+
+        music_selection = st.selectbox(
+            "Choose Track:",
+            list(music_urls.keys())
+        )
+
+        st.video(music_urls[music_selection])
 
     elif music_mode == "Search Music / Artist":
         search_query = st.text_input("Search Song or Artist:", "reidenshi")
@@ -166,7 +178,7 @@ with st.sidebar.expander("Music Section", expanded=True):
             components.iframe(embed_spotify, height=152)
 
     elif music_mode == "Custom YouTube URL":
-        target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=LlN8MPS7KQs")
+        target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=kvprs8s-qI8")
         if target_music:
             st.video(target_music)
 
