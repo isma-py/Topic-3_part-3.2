@@ -8,92 +8,93 @@ st.set_page_config(
     layout="wide"
 )
 
-# Responsive & Mode-Independent CSS Theme Fix
+# Soft & Warm Dark Mode CSS for Eye Strain Relief
 st.markdown("""
     <style>
-    /* Force consistent dark slate background across entire page in all modes */
+    /* Global Page Background & Text - Soft Slate Mocha */
     html, body, [data-testid="stAppViewContainer"], .stApp {
-        background-color: #0F172A !important;
-        color: #F8FAFC !important;
+        background-color: #181825 !important;
+        color: #CDD6F4 !important;
     }
     
-    /* Ensure Header banner matches dark background */
+    /* Header Area */
     [data-testid="stHeader"] {
-        background-color: #0F172A !important;
+        background-color: #181825 !important;
     }
 
-    /* All Header Texts forced bright white */
+    /* Soft Headings */
     h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
-        color: #F8FAFC !important;
+        color: #F5E0DC !important;
         font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         font-weight: 600;
     }
 
-    /* Paragraphs, Labels, and Explanations */
+    /* Paragraphs & Secondary Text */
     p, label, span, div, .stMarkdown {
-        color: #E2E8F0 !important;
+        color: #BAC2DE !important;
     }
     
     /* Sidebar Styling */
     section[data-testid="stSidebar"] {
-        background-color: #1E293B !important;
-        border-right: 1px solid #334155;
+        background-color: #11111B !important;
+        border-right: 1px solid #313244;
     }
     section[data-testid="stSidebar"] * {
-        color: #F1F5F9 !important;
+        color: #CDD6F4 !important;
     }
     
-    /* Framed Container Boxes */
+    /* Containers / Cards */
     div[data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #182232 !important;
-        border: 1px solid #334155 !important;
-        border-radius: 8px !important;
+        background-color: #1E1E2E !important;
+        border: 1px solid #313244 !important;
+        border-radius: 10px !important;
     }
 
-    /* Input Fields & Text Area Code Box */
+    /* Code Inputs & Text Areas */
     .stTextInput input, .stTextArea textarea {
-        background-color: #0F172A !important;
-        color: #F8FAFC !important;
-        border: 1px solid #475569 !important;
-        border-radius: 6px !important;
+        background-color: #181825 !important;
+        color: #CDD6F4 !important;
+        border: 1px solid #45475A !important;
+        border-radius: 8px !important;
         font-family: 'Fira Code', 'Courier New', monospace !important;
     }
     .stTextInput input:focus, .stTextArea textarea:focus {
-        border-color: #52796F !important;
-        box-shadow: 0 0 0 1px #52796F !important;
+        border-color: #89B4FA !important;
+        box-shadow: 0 0 0 1px #89B4FA !important;
     }
 
-    /* Expander / Reference Code Styling */
+    /* Code & Expander Accordions */
     .stExpander {
-        background-color: #0F172A !important;
-        border: 1px solid #334155 !important;
-        border-radius: 6px !important;
+        background-color: #181825 !important;
+        border: 1px solid #313244 !important;
+        border-radius: 8px !important;
     }
 
-    /* Button Styling */
+    /* Soft Accent Buttons */
     .stButton > button {
-        background-color: #52796F !important;
-        color: #FFFFFF !important;
+        background-color: #313244 !important;
+        color: #A6E3A1 !important;
         font-weight: 600;
-        border-radius: 6px;
-        border: none;
+        border-radius: 8px;
+        border: 1px solid #45475A;
         padding: 0.4rem 1rem;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s ease;
         width: 100%;
     }
     .stButton > button:hover {
-        background-color: #354F52 !important;
-        color: #FFFFFF !important;
+        background-color: #45475A !important;
+        color: #B4BEFE !important;
+        border-color: #585B70 !important;
     }
 
     /* Footer Branding */
     .footer-text {
         text-align: center;
-        color: #94A3B8 !important;
+        color: #6C7086 !important;
         font-size: 0.85rem;
         margin-top: 2rem;
         padding-top: 1rem;
-        border-top: 1px solid #334155;
+        border-top: 1px solid #313244;
     }
 
     /* Mobile Responsive Rules */
