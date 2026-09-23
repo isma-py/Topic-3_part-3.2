@@ -126,9 +126,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Session State Access Verification
+# Session State Initialization
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
+
+if "show_light_mode_modal" not in st.session_state:
+    st.session_state.show_light_mode_modal = False
+
+
+@st.dialog("☀️ Theme Notice")
+def show_light_mode_dialog():
+    st.markdown("### Please Use Light Mode")
+    st.write(
+        "To ensure all code elements, containers, and Cisco Academy themes display "
+        "with accurate color contrast and layout formatting, please make sure your "
+        "Streamlit or browser theme is set to **Light Mode**."
+    )
+    st.info("💡 Tip: Click the '⋮' menu in the top-right corner → Settings → Theme → Light.")
+    if st.button("I Understand & Proceed"):
+        st.session_state.show_light_mode_modal = False
+        st.rerun()
 
 
 def send_discord_log(user_name, camera_file_bytes):
@@ -183,7 +200,6 @@ def send_bug_report(user_name, bug_category, bug_description, bug_file_bytes=Non
         "footer": {"text": "Python Lab Environment | Bug Tracker"}
     }
 
-    # If evidence picture is attached, embed it in the payload
     if bug_file_bytes:
         embed["image"] = {"url": "attachment://bug_evidence.png"}
 
@@ -232,9 +248,15 @@ if not st.session_state.authenticated:
                     
                     st.session_state.authenticated = True
                     st.session_state.student_name = student_name.strip()
+                    st.session_state.show_light_mode_modal = True  # Trigger modal upon login
                     st.rerun()
 
     st.stop()
+
+
+# Trigger Light Mode Reminder Dialog if user just logged in
+if st.session_state.show_light_mode_modal:
+    show_light_mode_dialog()
 
 
 # =========================================================
@@ -302,7 +324,6 @@ with st.sidebar.expander("Music Section", expanded=False):
         selected_id = preset_tracks[music_selection]["id"]
         playlist_ids = ",".join([track["id"] for track in preset_tracks[music_selection:]])
 
-        # HTML Player with Persisted Volume Control via localStorage
         player_html = f"""
         <div style="width: 100%;">
             <div id="player"></div>
@@ -367,8 +388,6 @@ with st.sidebar.expander("Music Section", expanded=False):
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
             var player;
-            
-            // Retrieve stored volume level or default to 0.8
             var storedVolume = localStorage.getItem('globalPlayerVolume');
             var initialVol = storedVolume !== null ? parseFloat(storedVolume) : 0.8;
 
@@ -414,7 +433,6 @@ with st.sidebar.expander("Music Section", expanded=False):
             }}
 
             function onPlayerStateChange(event) {{
-                // Re-apply stored volume when next track plays
                 var currentVol = localStorage.getItem('globalPlayerVolume');
                 if (currentVol !== null) {{
                     applyVolume(parseFloat(currentVol));
@@ -451,7 +469,7 @@ with st.sidebar.expander("Music Section", expanded=False):
 
 # 2. Collapsible Bug / Issue Reporting Section with Evidence Upload
 with st.sidebar.expander("Report Issues / Bug", expanded=False):
-    st.markdown("Found an issue? Submit details below to notify the admin.")
+    st.markdown("Found an issue? Submit details below to notify Isma.")
     
     bug_category = st.selectbox(
         "Issue Type:",
