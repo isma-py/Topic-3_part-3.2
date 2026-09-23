@@ -8,27 +8,33 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom High-Contrast CSS Theme (Fixed for Dark Mode & Light Mode)
+# Responsive & Mode-Independent CSS Theme Fix
 st.markdown("""
     <style>
-    /* Main App Background */
-    .stApp {
+    /* Force consistent dark slate background across entire page in all modes */
+    html, body, [data-testid="stAppViewContainer"], .stApp {
         background-color: #0F172A !important;
+        color: #F8FAFC !important;
     }
     
-    /* Main Headers - Bright Crisp White */
+    /* Ensure Header banner matches dark background */
+    [data-testid="stHeader"] {
+        background-color: #0F172A !important;
+    }
+
+    /* All Header Texts forced bright white */
     h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
         color: #F8FAFC !important;
         font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         font-weight: 600;
     }
 
-    /* Paragraph & Label Text */
-    p, label, span, .stMarkdown {
+    /* Paragraphs, Labels, and Explanations */
+    p, label, span, div, .stMarkdown {
         color: #E2E8F0 !important;
     }
     
-    /* Sidebar Styling - Soft Muted Teal */
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {
         background-color: #1E293B !important;
         border-right: 1px solid #334155;
@@ -44,7 +50,7 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    /* Input Fields & Text Area Code Box (Fixed White-on-White Bug) */
+    /* Input Fields & Text Area Code Box */
     .stTextInput input, .stTextArea textarea {
         background-color: #0F172A !important;
         color: #F8FAFC !important;
@@ -64,7 +70,7 @@ st.markdown("""
         border-radius: 6px !important;
     }
 
-    /* Button Styling - Muted Sage Green */
+    /* Button Styling */
     .stButton > button {
         background-color: #52796F !important;
         color: #FFFFFF !important;
@@ -171,8 +177,8 @@ if st.button("Check"):
         with st.container(border=True):
             st.subheader("Test Your Self")
             user_code_1 = st.text_area(
-                "Type your Python / Streamlit code here:",
-                value=ref_code_1,
+                "Your Code",
+                value="",
                 height=180,
                 key="d1_sandbox"
             )
@@ -241,8 +247,8 @@ if st.button("Check"):
         with st.container(border=True):
             st.subheader("Test Your Self")
             user_code_2 = st.text_area(
-                "Type your Python / Streamlit code here:",
-                value=ref_code_2,
+                "Your Code",
+                value="",
                 height=200,
                 key="d2_sandbox"
             )
@@ -317,8 +323,8 @@ if st.button("Submit"):
         with st.container(border=True):
             st.subheader("Test Your Self")
             user_code_3 = st.text_area(
-                "Type your Python / Streamlit code here:",
-                value=ref_code_3,
+                "Your Code",
+                value="",
                 height=240,
                 key="d3_sandbox"
             )
@@ -396,8 +402,8 @@ if st.button("Submit"):
         with st.container(border=True):
             st.subheader("Test Your Self")
             user_code_4 = st.text_area(
-                "Type your Python / Streamlit code here:",
-                value=ref_code_4,
+                "Your Code",
+                value="",
                 height=260,
                 key="d4_sandbox"
             )
