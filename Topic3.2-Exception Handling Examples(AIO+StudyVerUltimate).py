@@ -137,13 +137,13 @@ st.sidebar.markdown("---")
 with st.sidebar.expander("Music Section", expanded=True):
     music_mode = st.radio(
         "Select Source:",
-        ["Live Station", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
+        ["Featured Track", "Search Music / Artist", "Spotify Player", "Custom YouTube URL"],
         key="music_mode_radio"
     )
 
-    if music_mode == "Live Station":
-        st.caption("Live Stream Radio")
-        st.video("https://www.youtube.com/live/QmAbRBjcbY4")
+    if music_mode == "Featured Track":
+        st.caption("oneheart x reidenshi - snowfall")
+        st.video("https://www.youtube.com/watch?v=LlN8MPS7KQs")
 
     elif music_mode == "Search Music / Artist":
         search_query = st.text_input("Search Song or Artist:", "reidenshi")
@@ -166,7 +166,7 @@ with st.sidebar.expander("Music Section", expanded=True):
             components.iframe(embed_spotify, height=152)
 
     elif music_mode == "Custom YouTube URL":
-        target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/live/QmAbRBjcbY4")
+        target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=LlN8MPS7KQs")
         if target_music:
             st.video(target_music)
 
