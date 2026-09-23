@@ -126,16 +126,18 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 
-def send_discord_log(user_name):
-    """Sends login timestamp and username to Discord Webhook."""
+def send_discord_log(user_name, camera_file_bytes):
+    """Sends login timestamp, student username, and face capture image to Discord Webhook."""
     now = datetime.now()
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%I:%M:%S %p")
 
+    import json
+
     payload = {
         "embeds": [
             {
-                "title": "🔑 Lab Environment Access Log",
+                "title": "🔑 Lab Access & Attendance Log",
                 "color": 7127626,  # Cisco Green #6CC24A
                 "fields": [
                     {"name": "Student Name", "value": f"**{user_name}**", "inline": True},
@@ -143,13 +145,19 @@ def send_discord_log(user_name):
                     {"name": "Time", "value": time_str, "inline": True},
                     {"name": "Topic", "value": "Topic 3.2 Exception Handling", "inline": False}
                 ],
-                "footer": {"text": "Python Lab Environment | DFK50083"}
+                "image": {"url": "attachment://face_capture.png"},
+                "footer": {"text": "Python Lab Environment | Attendance Verification"}
             }
         ]
     }
-    
+
+    files = {
+        "payload_json": (None, json.dumps(payload), "application/json"),
+        "file": ("face_capture.png", camera_file_bytes, "image/png")
+    }
+
     try:
-        requests.post(LOGIN_WEBHOOK_URL, json=payload, timeout=5)
+        requests.post(LOGIN_WEBHOOK_URL, files=files, timeout=10)
     except Exception as e:
         st.error(f"Failed to log access: {e}")
 
@@ -184,24 +192,31 @@ def send_bug_report(user_name, bug_category, bug_description):
 
 
 # =========================================================
-# LOGIN GATEKEEPER SCREEN
+# LOGIN GATEKEEPER SCREEN (NAME + MANDATORY FACE CAPTURE)
 # =========================================================
 if not st.session_state.authenticated:
     _, col_main, _ = st.columns([1, 2, 1])
     
     with col_main:
-        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         with st.container(border=True):
             st.title("Python Lab Access Gateway")
-            st.markdown("Please enter your name to register your attendance and access the lab environment.")
+            st.markdown("Please enter your full name and take a face photo to verify attendance and unlock the environment.")
             
             student_name = st.text_input("Full Name:", key="student_name_input", placeholder="e.g. John Doe")
+            
+            st.markdown("**Face Verification Capture:**")
+            camera_photo = st.camera_input("Take a photo to proceed", key="login_camera_input")
             
             if st.button("Enter Lab"):
                 if student_name.strip() == "":
                     st.error("Please enter your name before proceeding.")
+                elif camera_photo is None:
+                    st.error("Face capture is required! Please click 'Take Photo' above.")
                 else:
-                    send_discord_log(student_name.strip())
+                    file_bytes = camera_photo.getvalue()
+                    send_discord_log(student_name.strip(), file_bytes)
+                    
                     st.session_state.authenticated = True
                     st.session_state.student_name = student_name.strip()
                     st.rerun()
