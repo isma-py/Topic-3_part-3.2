@@ -86,6 +86,16 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
+    /* Footer Branding */
+    .footer-text {
+        text-align: center;
+        color: #94A3B8 !important;
+        font-size: 0.85rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #334155;
+    }
+
     /* Mobile Responsive Rules */
     @media (max-width: 768px) {
         .row-widget.stColumns {
@@ -114,6 +124,7 @@ demo_choice = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 st.sidebar.caption("DFK50083 Python Programming\nTopic 3.0: GUI Design & Exception Handling")
+st.sidebar.markdown("**Created by IsmaPY**")
 
 # Helper function to execute custom user code inside a container
 def execute_and_render(user_code, output_container):
@@ -421,3 +432,6 @@ if st.button("Submit"):
                     execute_and_render(user_code_4, st.container())
                 else:
                     st.info("Click 'Run My Code' to view output inside this frame.")
+
+# Footer Signature
+st.markdown('<div class="footer-text">Created by IsmaPY</div>', unsafe_allow_html=True)
