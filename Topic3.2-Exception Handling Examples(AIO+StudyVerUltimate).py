@@ -160,15 +160,14 @@ with st.sidebar.expander("Music Section", expanded=True):
         selected_id = preset_tracks[music_selection]["id"]
         playlist_ids = ",".join([track["id"] for track in preset_tracks[music_selection:]])
 
-        # Clean & Minimalist Volume Control UI
+        # Clean & Minimalist Volume Slider
         player_html = f"""
         <div style="width: 100%;">
             <div id="player"></div>
             
-            <!-- Clean & Simple Speaker Level Slider -->
             <div class="clean-volume-box">
                 <div class="clean-volume-label">
-                    <span>🔊 Speaker Level</span>
+                    <span>Volume</span>
                     <span id="volPercent" class="vol-val">80%</span>
                 </div>
                 <input 
@@ -185,10 +184,7 @@ with st.sidebar.expander("Music Section", expanded=True):
         <style>
           .clean-volume-box {{
             margin-top: 10px;
-            padding: 10px 12px;
-            background-color: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 8px;
+            padding: 8px 0px;
           }}
 
           .clean-volume-label {{
@@ -270,7 +266,7 @@ with st.sidebar.expander("Music Section", expanded=True):
             }}
         </script>
         """
-        components.html(player_html, height=235)
+        components.html(player_html, height=220)
 
     elif music_mode == "Search Music / Artist":
         search_query = st.text_input("Search Song or Artist:", "reidenshi")
