@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import sys
 import io
 import urllib.parse
@@ -159,7 +160,8 @@ elif music_mode == "Search Music / Artist":
     if search_query:
         encoded_query = urllib.parse.quote(search_query)
         embed_url = f"https://www.youtube.com/embed?listType=search&list={encoded_query}"
-        st.sidebar.components.v1.iframe(embed_url, height=200)
+        with st.sidebar:
+            components.iframe(embed_url, height=210)
 
 elif music_mode == "Custom YouTube URL":
     target_music = st.sidebar.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=jfKfPfyJRdk")
