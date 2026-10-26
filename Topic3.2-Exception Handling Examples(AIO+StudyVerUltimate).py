@@ -306,13 +306,20 @@ st.sidebar.subheader("Topics")
 
 st.sidebar.markdown("Select topic to start with:")
 
-# Define curriculum structure (Main Topics and their Sub-topics based on uploaded PDFs)
+# Define curriculum structure (Main Topics and their Sub-topics)
 curriculum = {
     "Topic 1: Basics of Python Programming": [
         "1.1 Introduction & Identifiers",
         "1.2 Data Structures (Collections)",
         "1.3 Types of Operators",
         "1.4 Control Structures & Loops"
+    ],
+    "Topic 2: Functions, Modules & OOP": [
+        "2.1 Functions & Arguments",
+        "2.2 Classes & Objects",
+        "2.3 Modules & Import",
+        "2.4 OOP Concepts (Inheritance, Encapsulation, Polymorphism)",
+        "2.5 Magic Methods"
     ]
 }
 
@@ -559,7 +566,7 @@ if current_selection == "Course Overview":
         "reference code, and interactive coding sandboxes."
     )
     st.markdown("---")
-    st.info("Topic 1 has been successfully loaded! Click on **1.1 Introduction & Identifiers** under Topic 1 in the sidebar to start reviewing.")
+    st.info("Topic 1 and Topic 2 are fully loaded! Choose a subtopic from the sidebar to begin your review.")
 
 elif current_selection == "1.1 Introduction & Identifiers":
     st.title("Topic 1.1: Introduction & Python Identifiers")
@@ -669,6 +676,136 @@ elif current_selection == "1.4 Control Structures & Loops":
             sandbox_code_14 = st.text_area("Test Loops & Conditions:", value='for i in range(1, 4):\n    if i == 2:\n        continue\n    print("Number:", i)', height=180, key="sandbox_14")
             if st.button("Run Code", key="run_14"):
                 execute_and_render(sandbox_code_14, st.container())
+
+elif current_selection == "2.1 Functions & Arguments":
+    st.title("Topic 2.1: Functions & Arguments")
+    st.markdown(
+        "**Overview:** Functions are reusable blocks of code that perform specific tasks, helping organize code and reduce repetition[cite: 109]. "
+        "Python supports both built-in library functions (`max()`, `len()`, `sum()`) and user-defined functions using the `def` keyword[cite: 111, 112]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Function Argument Types")
+            st.markdown("""
+            * **Default Arguments:** Assume a default value if no argument value is provided during the call (e.g., `def empInfo(name, dept='JTMK'):`)[cite: 118].
+            * **Keyword Arguments:** Caller identifies arguments explicitly by parameter name during a call (e.g., `studInfo(name="Siti")`)[cite: 119].
+            * **Positional Arguments:** Passed to a function in a strict, specific order[cite: 120].
+            * **Arbitrary Arguments (`*args`):** Allows passing a variable number of arguments using special symbols[cite: 121].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_21 = st.text_area("Test Functions:", value='def add_numbers(a, b=5):\n    return a + b\n\nprint("Result 1:", add_numbers(3))\nprint("Result 2:", add_numbers(3, 10))', height=180, key="sandbox_21")
+            if st.button("Run Code", key="run_21"):
+                execute_and_render(sandbox_code_21, st.container())
+
+elif current_selection == "2.2 Classes & Objects":
+    st.title("Topic 2.2: Classes & Objects")
+    st.markdown(
+        "**Overview:** Object-Oriented Programming (OOP) uses classes as user-defined templates or blueprints to bundle data and functions together into objects[cite: 169]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Key OOP Components")
+            st.markdown("""
+            * **Class & Object:** A class is a blueprint, while an object is an instance (instantiation) of that class[cite: 153].
+            * **Constructor (`__init__`):** Automatically initializes object instance attributes when an object is created[cite: 174, 176].
+            * **Class vs Instance Attributes:** Class attributes are shared across the class, whereas instance attributes belong to specific objects[cite: 175, 178].
+            * **Instance Methods:** Functions defined inside a class that can only be called from an instance of that class[cite: 179].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_22 = st.text_area("Test Classes & Objects:", value='class Car:\n    def __init__(self, brand):\n        self.brand = brand\n    def show(self):\n        print("Car brand:", self.brand)\n\nc = Car("Honda")\nc.show()', height=180, key="sandbox_22")
+            if st.button("Run Code", key="run_22"):
+                execute_and_render(sandbox_code_22, st.container())
+
+elif current_selection == "2.3 Modules & Import":
+    st.title("Topic 2.3: Modules & Import")
+    st.markdown(
+        "**Overview:** A Python module is a file containing Python definitions, functions, classes, and statements saved with a `.py` extension[cite: 138, 141]. "
+        "Modules help break down large tasks into smaller, manageable subtasks[cite: 139]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Import Statements")
+            st.markdown("""
+            * **Built-in Modules:** Standard library modules ready to use (e.g., `math`, `random`, `datetime`)[cite: 142].
+            * **User-Defined Modules:** Custom `.py` files created by you[cite: 143].
+            * **`import module_name`:** Imports the whole module; attributes are accessed via dot notation (`module_name.function()`)[cite: 145].
+            * **`from module import name`:** Imports specific attributes or functions directly[cite: 146].
+            * **`from module import *`:** Imports all attributes from a module[cite: 147].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_23 = st.text_area("Test Modules:", value='import math\nprint("Square root of 25:", math.sqrt(25))', height=180, key="sandbox_23")
+            if st.button("Run Code", key="run_23"):
+                execute_and_render(sandbox_code_23, st.container())
+
+elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymorphism)":
+    st.title("Topic 2.4: Core OOP Concepts")
+    st.markdown(
+        "**Overview:** Object-Oriented Programming principles include Inheritance, Encapsulation, and Polymorphism, allowing modular, secure, and flexible code construction[cite: 152]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Core Principles")
+            st.markdown("""
+            * **Inheritance:** Enables a derived class (child class) to inherit properties and methods from a base class (parent class) using `super().__init__()`[cite: 156, 157].
+            * **Encapsulation:** Restricts direct access to data to prevent accidental modification[cite: 159]. Uses public attributes and private attributes prefixed with double underscores (`__attribute`), accessed safely via getter and setter methods[cite: 159, 160].
+            * **Polymorphism:** Allows objects to behave like one another and be used interchangeably via method overriding or overloading[cite: 162].
+            * **Function Overloading:** Achieved in Python using default argument values or `*args` to handle multiple behaviors under the same name[cite: 163].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_24 = st.text_area("Test OOP Concepts:", value='class Animal:\n    def speak(self):\n        print("Animal speaks")\n\nclass Dog(Animal):\n    def speak(self):\n        print("Dog barks")\n\nd = Dog()\nd.speak()', height=180, key="sandbox_24")
+            if st.button("Run Code", key="run_24"):
+                execute_and_render(sandbox_code_24, st.container())
+
+elif current_selection == "2.5 Magic Methods":
+    st.title("Topic 2.5: Magic Methods")
+    st.markdown(
+        "**Overview:** Magic methods (dunder methods) are special methods starting and ending with double underscores (e.g., `__init__`, `__add__`, `__str__`)[cite: 126]. "
+        "They are defined by built-in classes and used heavily for operator overloading[cite: 126]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Common Magic Methods")
+            st.markdown("""
+            * `__init__(self, ...)`: Called during object instantiation/construction[cite: 131].
+            * `__str__(self)`: Returns a printable string representation when `str()` is called on an instance[cite: 130, 133].
+            * `__add__(self, other)`: Implements behavior for the addition (`+`) operator (operator overloading)[cite: 129, 132].
+            * `__sub__(self, other)`: Implements subtraction (`-`) operator behavior[cite: 132].
+            * `dir(class)`: Built-in function used to view all inherited attributes and magic methods of a class[cite: 127].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_25 = st.text_area("Test Magic Methods:", value='class Point:\n    def __init__(self, x):\n        self.x = x\n    def __add__(self, other):\n        return Point(self.x + other.x)\n    def __str__(self):\n        return f"Point({self.x})"\n\np1 = Point(5)\np2 = Point(10)\nprint(p1 + p2)', height=180, key="sandbox_25")
+            if st.button("Run Code", key="run_25"):
+                execute_and_render(sandbox_code_25, st.container())
 
 # Footer Signature
 st.markdown('<div class="footer-text">Created by IsmaPY</div>', unsafe_allow_html=True)
