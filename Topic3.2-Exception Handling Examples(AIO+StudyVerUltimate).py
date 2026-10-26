@@ -522,7 +522,137 @@ with st.sidebar.expander("Music Section", expanded=False):
     elif music_mode == "Custom YouTube URL":
         target_music = st.text_input("Paste YouTube Link:", "https://www.youtube.com/watch?v=kvprs8s-qI8")
         if target_music:
-            st.video(target_music)
+            def extract_yt_id(url):
+                parsed_url = urllib.parse.urlparse(url)
+                if parsed_url.hostname == 'youtu.be':
+                    return parsed_url.path[1:]
+                if parsed_url.hostname in ('www.youtube.com', 'youtube.com'):
+                    if parsed_url.path == '/watch':
+                        p = urllib.parse.parse_qs(parsed_url.query)
+                        return p.get('v', [None])[0]
+                    elif parsed_url.path.startswith('/embed/') or parsed_url.path.startswith('/v/'):
+                        return parsed_url.path.split('/')[2]
+                return "kvprs8s-qI8"
+
+            custom_id = extract_yt_id(target_music)
+
+            player_html = f"""
+            <div style="width: 100%;">
+                <div id="player"></div>
+                
+                <div class="clean-volume-box">
+                    <div class="clean-volume-label">Volume</div>
+                    <input 
+                        type="range" 
+                        id="volumeSlider" 
+                        min="0" 
+                        max="1" 
+                        step="0.01" 
+                        value="0.8" 
+                    />
+                </div>
+            </div>
+
+            <style>
+              .clean-volume-box {{
+                margin-top: 12px;
+                padding: 0px;
+              }}
+
+              .clean-volume-label {{
+                font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: #334155;
+                margin-bottom: 6px;
+                text-align: left;
+              }}
+
+              input[type="range"]#volumeSlider {{
+                -webkit-appearance: none;
+                width: 100%;
+                height: 6px;
+                border-radius: 3px;
+                background: linear-gradient(to right, #6CC24A var(--vol-fill, 80%), #E2E8F0 var(--vol-fill, 80%));
+                outline: none;
+                cursor: pointer;
+              }}
+
+              input[type="range"]#volumeSlider::-webkit-slider-thumb {{
+                -webkit-appearance: none;
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: #6CC24A;
+                border: 2px solid #FFFFFF;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                transition: transform 0.1s ease;
+              }}
+
+              input[type="range"]#volumeSlider::-webkit-slider-thumb:hover {{
+                transform: scale(1.15);
+              }}
+            </style>
+
+            <script>
+                var tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+                var player;
+                var storedVolume = localStorage.getItem('globalPlayerVolume');
+                var initialVol = storedVolume !== null ? parseFloat(storedVolume) : 0.8;
+
+                function onYouTubeIframeAPIReady() {{
+                    player = new YT.Player('player', {{
+                        height: '170',
+                        width: '100%',
+                        videoId: '{custom_id}',
+                        playerVars: {{
+                            'autoplay': 1,
+                            'playsinline': 1
+                        }},
+                        events: {{
+                            'onReady': onPlayerReady,
+                            'onStateChange': onPlayerStateChange
+                        }}
+                    }});
+                }}
+
+                function applyVolume(val) {{
+                    if (player && player.setVolume) {{
+                        player.setVolume(val * 100);
+                    }}
+                    const slider = document.getElementById('volumeSlider');
+                    if (slider) {{
+                        slider.value = val;
+                        let perc = Math.round(val * 100);
+                        slider.style.setProperty('--vol-fill', perc + '%');
+                    }}
+                }}
+
+                function onPlayerReady(event) {{
+                    applyVolume(initialVol);
+                    event.target.playVideo();
+                    
+                    const slider = document.getElementById('volumeSlider');
+                    slider.addEventListener('input', function() {{
+                        let val = this.value;
+                        localStorage.setItem('globalPlayerVolume', val);
+                        applyVolume(val);
+                    }});
+                }}
+
+                function onPlayerStateChange(event) {{
+                    var currentVol = localStorage.getItem('globalPlayerVolume');
+                    if (currentVol !== null) {{
+                        applyVolume(parseFloat(currentVol));
+                    }}
+                }}
+            </script>
+            """
+            components.html(player_html, height=260)
 
 # 2. Collapsible Bug / Issue Reporting Section with Evidence Upload & Cooldown
 with st.sidebar.expander("Report Issues / Bug", expanded=False):
@@ -593,8 +723,8 @@ if current_selection == "Course Overview":
 elif current_selection == "1.1 Introduction & Identifiers":
     st.title("Topic 1.1: Introduction & Python Identifiers")
     st.markdown(
-        "**Overview:** Python is a high-level, interpreted, general-purpose programming language created by Guido van Rossum in 1991[cite: 6]. "
-        "It is beginner-friendly, readable, cross-platform, and open source[cite: 6]."
+        "**Overview:** Python is a high-level, interpreted, general-purpose programming language created by Guido van Rossum in 1991. "
+        "It is beginner-friendly, readable, cross-platform, and open source."
     )
     st.markdown("---")
     
@@ -603,12 +733,12 @@ elif current_selection == "1.1 Introduction & Identifiers":
         with st.container(border=True):
             st.subheader("Key Concepts & Rules")
             st.markdown("""
-            * **Identifiers:** Names assigned to variables, methods, and other objects (e.g., `empName = "Siti Fatimah"`)[cite: 8].
-            * **Keywords:** Predefined reserved words with special meanings (e.g., `if`, `else`, `while`, `def`, `class`)[cite: 9]. Cannot be used as variable names[cite: 9].
-            * **Indentation:** Python uses indentation (spaces at the beginning of a line) to define code blocks instead of braces[cite: 10]. Missing indentation raises an `IndentationError`[cite: 10].
-            * **Multi-Line Statements:** Can span multiple lines using backslashes (`\\`), parentheses `()`, square brackets `[]`, braces `{}`, or triple quotes `\"\"\"`[cite: 11].
-            * **Multiple Statements:** Multiple statements can be written on a single line using a semicolon (`;`)[cite: 12].
-            * **Variables & Casting:** Variables don't need explicit type declaration[cite: 14]. Use casting functions like `int()`, `float()`, or `str()` if needed[cite: 14].
+            * **Identifiers:** Names assigned to variables, methods, and other objects (e.g., `empName = "Siti Fatimah"`).
+            * **Keywords:** Predefined reserved words with special meanings (e.g., `if`, `else`, `while`, `def`, `class`). Cannot be used as variable names.
+            * **Indentation:** Python uses indentation (spaces at the beginning of a line) to define code blocks instead of braces. Missing indentation raises an `IndentationError`.
+            * **Multi-Line Statements:** Can span multiple lines using backslashes (`\\`), parentheses `()`, square brackets `[]`, braces `{}`, or triple quotes `\"\"\"`.
+            * **Multiple Statements:** Multiple statements can be written on a single line using a semicolon (`;`).
+            * **Variables & Casting:** Variables don't need explicit type declaration. Use casting functions like `int()`, `float()`, or `str()` if needed.
             """)
     
     with col_right:
@@ -639,8 +769,8 @@ elif current_selection == "1.1 Introduction & Identifiers":
 elif current_selection == "1.2 Data Structures (Collections)":
     st.title("Topic 1.2: Python Data Structures (Collection Types)")
     st.markdown(
-        "**Overview:** Collection types represent a group of objects as a single unit[cite: 23]. Python includes built-in collection structures: "
-        "Tuples, Lists, Dictionaries, Sets, and Strings[cite: 20]."
+        "**Overview:** Collection types represent a group of objects as a single unit. Python includes built-in collection structures: "
+        "Tuples, Lists, Dictionaries, Sets, and Strings."
     )
     st.markdown("---")
     
@@ -649,11 +779,11 @@ elif current_selection == "1.2 Data Structures (Collections)":
         with st.container(border=True):
             st.subheader("Collection Summary")
             st.markdown("""
-            * **Tuples (`()`):** Ordered and **immutable** (unchangeable) collection defined with parentheses[cite: 24, 25]. Supports positive and negative indexing[cite: 25, 26].
-            * **Lists (`[]`):** Ordered and **mutable** (changeable) containers[cite: 35, 36]. Supports adding (`append()`, `extend()`, `+`), inserting (`insert()`), removing (`remove()`, `pop()`), and deleting (`del`)[cite: 38, 42, 44, 48].
-            * **Dictionaries (`{}`):** Unordered, changeable collections of unique **key-value pairs**[cite: 50, 51]. Values are accessed via keys or `.get()`[cite: 52].
-            * **Sets (`{}`):** Unordered collections of **unique elements** (no duplicates)[cite: 57, 58]. Supports set operations like Union (`|`), Intersection (`&`), Difference (`-`), and Symmetric Difference (`^`)[cite: 64].
-            * **Strings:** Character sequences enclosed in single (`''`) or double (`\"\"\"`) quotes[cite: 66, 68].
+            * **Tuples (`()`):** Ordered and **immutable** (unchangeable) collection defined with parentheses. Supports positive and negative indexing.
+            * **Lists (`[]`):** Ordered and **mutable** (changeable) containers. Supports adding (`append()`, `extend()`, `+`), inserting (`insert()`), removing (`remove()`, `pop()`), and deleting (`del`).
+            * **Dictionaries (`{}`):** Unordered, changeable collections of unique **key-value pairs**. Values are accessed via keys or `.get()`.
+            * **Sets (`{}`):** Unordered collections of **unique elements** (no duplicates). Supports set operations like Union (`|`), Intersection (`&`), Difference (`-`), and Symmetric Difference (`^`).
+            * **Strings:** Character sequences enclosed in single (`''`) or double (`\"\"\"`) quotes.
             """)
             
     with col_right:
@@ -686,7 +816,7 @@ elif current_selection == "1.2 Data Structures (Collections)":
 elif current_selection == "1.3 Types of Operators":
     st.title("Topic 1.3: Types of Operators")
     st.markdown(
-        "**Overview:** Operators are special symbols used to perform operations on values and variables (operands)[cite: 88]."
+        "**Overview:** Operators are special symbols used to perform operations on values and variables (operands)."
     )
     st.markdown("---")
     
@@ -695,12 +825,12 @@ elif current_selection == "1.3 Types of Operators":
         with st.container(border=True):
             st.subheader("Operator Categories")
             st.markdown("""
-            * **Arithmetic:** `+`, `-`, `*`, `/`, `%` (modulus), `**` (exponent), `//` (floor division)[cite: 89].
-            * **Comparison:** `<`, `<=`, `>`, `>=`, `==`, `!=` (return `True` or `False`)[cite: 91].
-            * **Assignment:** `=`, `+=`, `-=`, `*=`, `/=`, and bitwise assignment operators (`&=`, `|=`, `^=`, `>>=`, `<<=`)[cite: 93].
-            * **Logical:** `and`, `or`, `not`[cite: 99].
-            * **Membership:** `in`, `not in` (checks if value exists in a sequence)[cite: 101].
-            * **Identity:** `is`, `is not` (checks if two variables point to the same memory location)[cite: 103].
+            * **Arithmetic:** `+`, `-`, `*`, `/`, `%` (modulus), `**` (exponent), `//` (floor division).
+            * **Comparison:** `<`, `<=`, `>`, `>=`, `==`, `!=` (return `True` or `False`).
+            * **Assignment:** `=`, `+=`, `-=`, `*=`, `/=`, and bitwise assignment operators (`&=`, `|=`, `^=`, `>>=`, `<<=` ).
+            * **Logical:** `and`, `or`, `not`.
+            * **Membership:** `in`, `not in` (checks if value exists in a sequence).
+            * **Identity:** `is`, `is not` (checks if two variables point to the same memory location).
             """)
             
     with col_right:
@@ -731,7 +861,7 @@ elif current_selection == "1.3 Types of Operators":
 elif current_selection == "1.4 Control Structures & Loops":
     st.title("Topic 1.4: Control Structures & Loops")
     st.markdown(
-        "**Overview:** Control structures allow a program to make decisions and repeat execution sequences based on conditions[cite: 73, 78]."
+        "**Overview:** Control structures allow a program to make decisions and repeat execution sequences based on conditions."
     )
     st.markdown("---")
     
@@ -740,12 +870,12 @@ elif current_selection == "1.4 Control Structures & Loops":
         with st.container(border=True):
             st.subheader("Decision Making & Looping")
             st.markdown("""
-            * **Decision Making:** `if`, `if..else`, and `if..elif..else` statements[cite: 73].
-            * **While Loop:** Executes a block of statements as long as the test condition remains `True`[cite: 79].
-            * **For Loop:** Iterates over sequences (lists, tuples, dictionaries, sets, strings) or numeric ranges using `range()`[cite: 80].
+            * **Decision Making:** `if`, `if..else`, and `if..elif..else` statements.
+            * **While Loop:** Executes a block of statements as long as the test condition remains `True`.
+            * **For Loop:** Iterates over sequences (lists, tuples, dictionaries, sets, strings) or numeric ranges using `range()`.
             * **Control Statements:**
-              * `break`: Terminates the loop immediately[cite: 78, 82].
-              * `continue`: Skips the current iteration and proceeds to the next[cite: 78, 83].
+              * `break`: Terminates the loop immediately.
+              * `continue`: Skips the current iteration and proceeds to the next.
             """)
             
     with col_right:
@@ -775,8 +905,8 @@ elif current_selection == "1.4 Control Structures & Loops":
 elif current_selection == "2.1 Functions & Arguments":
     st.title("Topic 2.1: Functions & Arguments")
     st.markdown(
-        "**Overview:** Functions are reusable blocks of code that perform specific tasks, helping organize code and reduce repetition[cite: 109]. "
-        "Python supports both built-in library functions (`max()`, `len()`, `sum()`) and user-defined functions using the `def` keyword[cite: 111, 112]."
+        "**Overview:** Functions are reusable blocks of code that perform specific tasks, helping organize code and reduce repetition. "
+        "Python supports both built-in library functions (`max()`, `len()`, `sum()`) and user-defined functions using the `def` keyword."
     )
     st.markdown("---")
     
@@ -785,10 +915,10 @@ elif current_selection == "2.1 Functions & Arguments":
         with st.container(border=True):
             st.subheader("Function Argument Types")
             st.markdown("""
-            * **Default Arguments:** Assume a default value if no argument value is provided during the call (e.g., `def empInfo(name, dept='JTMK'):`)[cite: 118].
-            * **Keyword Arguments:** Caller identifies arguments explicitly by parameter name during a call (e.g., `studInfo(name="Siti")`)[cite: 119].
-            * **Positional Arguments:** Passed to a function in a strict, specific order[cite: 120].
-            * **Arbitrary Arguments (`*args`):** Allows passing a variable number of arguments using special symbols[cite: 121].
+            * **Default Arguments:** Assume a default value if no argument value is provided during the call (e.g., `def empInfo(name, dept='JTMK'):`).
+            * **Keyword Arguments:** Caller identifies arguments explicitly by parameter name during a call (e.g., `studInfo(name="Siti")`).
+            * **Positional Arguments:** Passed to a function in a strict, specific order.
+            * **Arbitrary Arguments (`*args`):** Allows passing a variable number of arguments using special symbols.
             """)
             
     with col_right:
@@ -820,7 +950,7 @@ elif current_selection == "2.1 Functions & Arguments":
 elif current_selection == "2.2 Classes & Objects":
     st.title("Topic 2.2: Classes & Objects")
     st.markdown(
-        "**Overview:** Object-Oriented Programming (OOP) uses classes as user-defined templates or blueprints to bundle data and functions together into objects[cite: 169]."
+        "**Overview:** Object-Oriented Programming (OOP) uses classes as user-defined templates or blueprints to bundle data and functions together into objects."
     )
     st.markdown("---")
     
@@ -829,10 +959,10 @@ elif current_selection == "2.2 Classes & Objects":
         with st.container(border=True):
             st.subheader("Key OOP Components")
             st.markdown("""
-            * **Class & Object:** A class is a blueprint, while an object is an instance (instantiation) of that class[cite: 153].
-            * **Constructor (`__init__`):** Automatically initializes object instance attributes when an object is created[cite: 174, 176].
-            * **Class vs Instance Attributes:** Class attributes are shared across the class, whereas instance attributes belong to specific objects[cite: 175, 178].
-            * **Instance Methods:** Functions defined inside a class that can only be called from an instance of that class[cite: 179].
+            * **Class & Object:** A class is a blueprint, while an object is an instance (instantiation) of that class.
+            * **Constructor (`__init__`):** Automatically initializes object instance attributes when an object is created.
+            * **Class vs Instance Attributes:** Class attributes are shared across the class, whereas instance attributes belong to specific objects.
+            * **Instance Methods:** Functions defined inside a class that can only be called from an instance of that class.
             """)
             
     with col_right:
@@ -867,8 +997,8 @@ elif current_selection == "2.2 Classes & Objects":
 elif current_selection == "2.3 Modules & Import":
     st.title("Topic 2.3: Modules & Import")
     st.markdown(
-        "**Overview:** A Python module is a file containing Python definitions, functions, classes, and statements saved with a `.py` extension[cite: 138, 141]. "
-        "Modules help break down large tasks into smaller, manageable subtasks[cite: 139]."
+        "**Overview:** A Python module is a file containing Python definitions, functions, classes, and statements saved with a `.py` extension. "
+        "Modules help break down large tasks into smaller, manageable subtasks."
     )
     st.markdown("---")
     
@@ -877,11 +1007,11 @@ elif current_selection == "2.3 Modules & Import":
         with st.container(border=True):
             st.subheader("Import Statements")
             st.markdown("""
-            * **Built-in Modules:** Standard library modules ready to use (e.g., `math`, `random`, `datetime`)[cite: 142].
-            * **User-Defined Modules:** Custom `.py` files created by you[cite: 143].
-            * **`import module_name`:** Imports the whole module; attributes are accessed via dot notation (`module_name.function()`)[cite: 145].
-            * **`from module import name`:** Imports specific attributes or functions directly[cite: 146].
-            * **`from module import *`:** Imports all attributes from a module[cite: 147].
+            * **Built-in Modules:** Standard library modules ready to use (e.g., `math`, `random`, `datetime`).
+            * **User-Defined Modules:** Custom `.py` files created by you.
+            * **`import module_name`:** Imports the whole module; attributes are accessed via dot notation (`module_name.function()`).
+            * **`from module import name`:** Imports specific attributes or functions directly.
+            * **`from module import *`:** Imports all attributes from a module.
             """)
             
     with col_right:
@@ -910,7 +1040,7 @@ elif current_selection == "2.3 Modules & Import":
 elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymorphism)":
     st.title("Topic 2.4: Core OOP Concepts")
     st.markdown(
-        "**Overview:** Object-Oriented Programming principles include Inheritance, Encapsulation, and Polymorphism, allowing modular, secure, and flexible code construction[cite: 152]."
+        "**Overview:** Object-Oriented Programming principles include Inheritance, Encapsulation, and Polymorphism, allowing modular, secure, and flexible code construction."
     )
     st.markdown("---")
     
@@ -919,10 +1049,10 @@ elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymor
         with st.container(border=True):
             st.subheader("Core Principles")
             st.markdown("""
-            * **Inheritance:** Enables a derived class (child class) to inherit properties and methods from a base class (parent class) using `super().__init__()`[cite: 156, 157].
-            * **Encapsulation:** Restricts direct access to data to prevent accidental modification[cite: 159]. Uses public attributes and private attributes prefixed with double underscores (`__attribute`), accessed safely via getter and setter methods[cite: 159, 160].
-            * **Polymorphism:** Allows objects to behave like one another and be used interchangeably via method overriding or overloading[cite: 162].
-            * **Function Overloading:** Achieved in Python using default argument values or `*args` to handle multiple behaviors under the same name[cite: 163].
+            * **Inheritance:** Enables a derived class (child class) to inherit properties and methods from a base class (parent class) using `super().__init__()`.
+            * **Encapsulation:** Restricts direct access to data to prevent accidental modification. Uses public attributes and private attributes prefixed with double underscores (`__attribute`), accessed safely via getter and setter methods.
+            * **Polymorphism:** Allows objects to behave like one another and be used interchangeably via method overriding or overloading.
+            * **Function Overloading:** Achieved in Python using default argument values or `*args` to handle multiple behaviors under the same name.
             """)
             
     with col_right:
@@ -956,8 +1086,8 @@ elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymor
 elif current_selection == "2.5 Magic Methods":
     st.title("Topic 2.5: Magic Methods")
     st.markdown(
-        "**Overview:** Magic methods (dunder methods) are special methods starting and ending with double underscores (e.g., `__init__`, `__add__`, `__str__`)[cite: 126]. "
-        "They are defined by built-in classes and used heavily for operator overloading[cite: 126]."
+        "**Overview:** Magic methods (dunder methods) are special methods starting and ending with double underscores (e.g., `__init__`, `__add__`, `__str__`). "
+        "They are defined by built-in classes and used heavily for operator overloading."
     )
     st.markdown("---")
     
@@ -966,11 +1096,11 @@ elif current_selection == "2.5 Magic Methods":
         with st.container(border=True):
             st.subheader("Common Magic Methods")
             st.markdown("""
-            * `__init__(self, ...)`: Called during object instantiation/construction[cite: 131].
-            * `__str__(self)`: Returns a printable string representation when `str()` is called on an instance[cite: 130, 133].
-            * `__add__(self, other)`: Implements behavior for the addition (`+`) operator (operator overloading)[cite: 129, 132].
-            * `__sub__(self, other)`: Implements subtraction (`-`) operator behavior[cite: 132].
-            * `dir(class)`: Built-in function used to view all inherited attributes and magic methods of a class[cite: 127].
+            * `__init__(self, ...)`: Called during object instantiation/construction.
+            * `__str__(self)`: Returns a printable string representation when `str()` is called on an instance.
+            * `__add__(self, other)`: Implements behavior for the addition (`+`) operator (operator overloading).
+            * `__sub__(self, other)`: Implements subtraction (`-`) operator behavior.
+            * `dir(class)`: Built-in function used to view all inherited attributes and magic methods of a class.
             """)
             
     with col_right:
@@ -1005,8 +1135,8 @@ elif current_selection == "2.5 Magic Methods":
 elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
     st.title("Topic 3.1: Introduction to GUI & Streamlit UI")
     st.markdown(
-        "**Overview:** A Graphical User Interface (GUI) allows users to interact visually using buttons, text boxes, and sliders instead of console commands[cite: 184]. "
-        "Streamlit is a Python framework that turns Python scripts into interactive web applications without HTML, CSS, or JavaScript[cite: 186]."
+        "**Overview:** A Graphical User Interface (GUI) allows users to interact visually using buttons, text boxes, and sliders instead of console commands. "
+        "Streamlit is a Python framework that turns Python scripts into interactive web applications without HTML, CSS, or JavaScript."
     )
     st.markdown("---")
     
@@ -1015,10 +1145,10 @@ elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
         with st.container(border=True):
             st.subheader("GUI Frameworks & Streamlit Setup")
             st.markdown("""
-            * **GUI Options:** Tkinter (built-in), PyQt / PySide, Streamlit (web-based), and Kivy (cross-platform/mobile)[cite: 184].
-            * **Installation:** Install Streamlit via terminal using `pip install streamlit` or `python -m pip install streamlit`[cite: 186].
-            * **Creating & Running:** Save your file as `app.py` and run it in the terminal using `streamlit run app.py`[cite: 187, 188].
-            * **Deployment:** Public GitHub repositories containing `app.py` and `requirements.txt` can be deployed on Streamlit Community Cloud[cite: 189, 190, 191].
+            * **GUI Options:** Tkinter (built-in), PyQt / PySide, Streamlit (web-based), and Kivy (cross-platform/mobile).
+            * **Installation:** Install Streamlit via terminal using `pip install streamlit` or `python -m pip install streamlit`.
+            * **Creating & Running:** Save your file as `app.py` and run it in the terminal using `streamlit run app.py`.
+            * **Deployment:** Public GitHub repositories containing `app.py` and `requirements.txt` can be deployed on Streamlit Community Cloud.
             """)
             
     with col_right:
@@ -1045,7 +1175,7 @@ elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
 elif current_selection == "3.2 User Events & Interactive Widgets":
     st.title("Topic 3.2: User Events & Interactive Widgets")
     st.markdown(
-        "**Overview:** Streamlit automatically updates and reruns the app whenever a user interacts with a widget[cite: 193]."
+        "**Overview:** Streamlit automatically updates and reruns the app whenever a user interacts with a widget."
     )
     st.markdown("---")
     
@@ -1054,11 +1184,11 @@ elif current_selection == "3.2 User Events & Interactive Widgets":
         with st.container(border=True):
             st.subheader("Common Interactive Widgets")
             st.markdown("""
-            * **Text Input (`st.text_input`):** Captures single-line text input from users[cite: 193].
-            * **Button (`st.button`):** Triggers actions when clicked[cite: 194].
-            * **Checkbox (`st.checkbox`):** Allows boolean true/false toggle options[cite: 195].
-            * **Radio Buttons (`st.radio`):** Selects a single option from a list[cite: 196].
-            * **Selectbox / Dropdown (`st.selectbox`):** Selects an item from a drop-down menu list[cite: 197].
+            * **Text Input (`st.text_input`):** Captures single-line text input from users.
+            * **Button (`st.button`):** Triggers actions when clicked.
+            * **Checkbox (`st.checkbox`):** Allows boolean true/false toggle options.
+            * **Radio Buttons (`st.radio`):** Selects a single option from a list.
+            * **Selectbox / Dropdown (`st.selectbox`):** Selects an item from a drop-down menu list.
             """)
             
     with col_right:
@@ -1085,7 +1215,7 @@ elif current_selection == "3.2 User Events & Interactive Widgets":
 elif current_selection == "3.3 Exception Handling (Try & Except)":
     st.title("Topic 3.3: Exception Handling (Try & Except)")
     st.markdown(
-        "**Overview:** Exception handling allows programs to catch and manage runtime errors gracefully instead of crashing, making code robust and user-friendly[cite: 202]."
+        "**Overview:** Exception handling allows programs to catch and manage runtime errors gracefully instead of crashing, making code robust and user-friendly."
     )
     st.markdown("---")
     
@@ -1094,9 +1224,9 @@ elif current_selection == "3.3 Exception Handling (Try & Except)":
         with st.container(border=True):
             st.subheader("Try and Except Blocks")
             st.markdown("""
-            * **`try` Block:** Used to test and check a block of code for errors during execution[cite: 204]. Executes when there are no errors[cite: 204].
-            * **`except` Block:** Executes whenever the program encounters an error in the preceding `try` block[cite: 204].
-            * **Catching Specific Errors:** You can catch specific exceptions like `ValueError` or `ZeroDivisionError` to display customized error messages[cite: 200, 205].
+            * **`try` Block:** Used to test and check a block of code for errors during execution. Executes when there are no errors.
+            * **`except` Block:** Executes whenever the program encounters an error in the preceding `try` block.
+            * **Catching Specific Errors:** You can catch specific exceptions like `ValueError` or `ZeroDivisionError` to display customized error messages.
             """)
             
     with col_right:
@@ -1128,7 +1258,7 @@ elif current_selection == "3.3 Exception Handling (Try & Except)":
 elif current_selection == "3.4 Exception Handling (Else & Finally)":
     st.title("Topic 3.4: Exception Handling (Else & Finally)")
     st.markdown(
-        "**Overview:** Advanced exception handling blocks (`else` and `finally`) provide precise control over code execution flow depending on whether errors occurred[cite: 207, 210]."
+        "**Overview:** Advanced exception handling blocks (`else` and `finally`) provide precise control over code execution flow depending on whether errors occurred."
     )
     st.markdown("---")
     
@@ -1137,9 +1267,9 @@ elif current_selection == "3.4 Exception Handling (Else & Finally)":
         with st.container(border=True):
             st.subheader("Else & Finally Clauses")
             st.markdown("""
-            * **`else` Clause:** Defines a block of code to be executed **only if no errors were raised** in the `try` block[cite: 207].
-            * **`finally` Clause:** Always executes after the `try` and `except` blocks terminate, **regardless** of whether an error occurred or not[cite: 210].
-            * **Raising Exceptions (`raise`):** Used to manually trigger custom exceptions (e.g., `raise ValueError("Invalid Email")`)[cite: 212, 213].
+            * **`else` Clause:** Defines a block of code to be executed **only if no errors were raised** in the `try` block.
+            * **`finally` Clause:** Always executes after the `try` and `except` blocks terminate, **regardless** of whether an error occurred or not.
+            * **Raising Exceptions (`raise`):** Used to manually trigger custom exceptions (e.g., `raise ValueError("Invalid Email")`).
             """)
             
     with col_right:
@@ -1176,8 +1306,8 @@ elif current_selection == "3.4 Exception Handling (Else & Finally)":
 elif current_selection == "4.1 NumPy ndarray & Creation Routines":
     st.title("Topic 4.1: NumPy ndarray & Creation Routines")
     st.markdown(
-        "**Overview:** NumPy (Numerical Python) is the core library for matrix processing in Python[cite: 218, 226]. "
-        "Its central data structure is `ndarray` (n-dimensional array), which is significantly faster and more memory-efficient than Python lists because elements are stored in contiguous memory[cite: 226]."
+        "**Overview:** NumPy (Numerical Python) is the core library for matrix processing in Python. "
+        "Its central data structure is `ndarray` (n-dimensional array), which is significantly faster and more memory-efficient than Python lists because elements are stored in contiguous memory."
     )
     st.markdown("---")
     
@@ -1186,13 +1316,13 @@ elif current_selection == "4.1 NumPy ndarray & Creation Routines":
         with st.container(border=True):
             st.subheader("Array Attributes & Creation Functions")
             st.markdown("""
-            * **Core Attributes:** `.shape` (rows, columns)[cite: 232], `.ndim` (number of dimensions)[cite: 232], `.size` (total elements)[cite: 232], `.dtype` (data type)[cite: 232], and `.nbytes` (total memory)[cite: 232].
-            * **`np.zeros(shape)` / `np.ones(shape)`:** Creates arrays filled with zeros or ones[cite: 235].
-            * **`np.full(shape, value)`:** Creates an array filled with a specified value[cite: 235].
-            * **`np.eye(n)`:** Generates an $n \times n$ identity matrix[cite: 235].
-            * **`np.arange(start, stop, step)`:** Returns evenly spaced values within a given range[cite: 235].
-            * **`np.linspace(start, stop, num)`:** Generates a specified number of evenly spaced values[cite: 235].
-            * **`np.random.randint(low, high, size)`:** Generates random integers within a range[cite: 235].
+            * **Core Attributes:** `.shape` (rows, columns), `.ndim` (number of dimensions), `.size` (total elements), `.dtype` (data type), and `.nbytes` (total memory).
+            * **`np.zeros(shape)` / `np.ones(shape)`:** Creates arrays filled with zeros or ones.
+            * **`np.full(shape, value)`:** Creates an array filled with a specified value.
+            * **`np.eye(n)`:** Generates an $n \times n$ identity matrix.
+            * **`np.arange(start, stop, step)`:** Returns evenly spaced values within a given range.
+            * **`np.linspace(start, stop, num)`:** Generates a specified number of evenly spaced values.
+            * **`np.random.randint(low, high, size)`:** Generates random integers within a range.
             """)
             
     with col_right:
@@ -1222,7 +1352,7 @@ elif current_selection == "4.2 Indexing, Slicing & Array Manipulation":
     st.title("Topic 4.2: Indexing, Slicing & Array Manipulation")
     st.markdown(
         "**Overview:** NumPy allows precise data extraction via multi-dimensional indexing and slicing (`arr[row, col]` and `start:stop:step`), "
-        "along with structural manipulation without altering underlying data[cite: 238, 240, 244]."
+        "along with structural manipulation without altering underlying data."
     )
     st.markdown("---")
     
@@ -1231,12 +1361,12 @@ elif current_selection == "4.2 Indexing, Slicing & Array Manipulation":
         with st.container(border=True):
             st.subheader("Manipulation & Slicing Operations")
             st.markdown("""
-            * **Indexing (`arr[row, col]`):** Accesses specific elements; negative indices count from the end[cite: 238, 239].
-            * **Slicing (`arr[start:stop, start:stop]`):** Extracts portions of arrays (stop index is exclusive)[cite: 240, 241].
-            * **`reshape(shape)`:** Changes array dimensions without altering data[cite: 244, 245].
-            * **`flatten()`:** Converts a multi-dimensional array into a 1D array[cite: 244, 245].
-            * **`transpose()` or `.T`:** Flips rows and columns[cite: 244, 245].
-            * **Stacking & Concatenation:** `np.hstack()`, `np.vstack()`, and `np.concatenate(axis=0/1)` combine arrays horizontally or vertically[cite: 244, 246].
+            * **Indexing (`arr[row, col]`):** Accesses specific elements; negative indices count from the end.
+            * **Slicing (`arr[start:stop, start:stop]`):** Extracts portions of arrays (stop index is exclusive).
+            * **`reshape(shape)`:** Changes array dimensions without altering data.
+            * **`flatten()`:** Converts a multi-dimensional array into a 1D array.
+            * **`transpose()` or `.T`:** Flips rows and columns.
+            * **Stacking & Concatenation:** `np.hstack()`, `np.vstack()`, and `np.concatenate(axis=0/1)` combine arrays horizontally or vertically.
             """)
             
     with col_right:
@@ -1266,7 +1396,7 @@ elif current_selection == "4.3 Matplotlib Data Visualization":
     st.title("Topic 4.3: Matplotlib Data Visualization")
     st.markdown(
         "**Overview:** Matplotlib is a powerful Python visualization library that integrates seamlessly with NumPy arrays "
-        "to plot mathematical functions, inspect trends, and present analytical results[cite: 221]."
+        "to plot mathematical functions, inspect trends, and present analytical results."
     )
     st.markdown("---")
     
@@ -1275,11 +1405,11 @@ elif current_selection == "4.3 Matplotlib Data Visualization":
         with st.container(border=True):
             st.subheader("Key Plotting Functions")
             st.markdown("""
-            * **Installation:** Install via terminal using `pip install matplotlib`[cite: 222].
-            * **Line Plots (`plt.plot(x, y)`):** Connects data points with lines; supports custom markers like `marker='o'`[cite: 222, 223].
-            * **Scatter Plots (`plt.scatter(x, y)`):** Displays individual data points to show correlation between variables (e.g., exam score comparisons)[cite: 224].
-            * **Customization:** Use `plt.title()`, `plt.xlabel()`, `plt.ylabel()`, `plt.grid(True)`, and `plt.ylim()` to format graphs for readability[cite: 222, 223, 224].
-            * **Display:** `plt.show()` renders the graph window[cite: 222, 223, 224].
+            * **Installation:** Install via terminal using `pip install matplotlib`.
+            * **Line Plots (`plt.plot(x, y)`):** Connects data points with lines; supports custom markers like `marker='o'`.
+            * **Scatter Plots (`plt.scatter(x, y)`):** Displays individual data points to show correlation between variables (e.g., exam score comparisons).
+            * **Customization:** Use `plt.title()`, `plt.xlabel()`, `plt.ylabel()`, `plt.grid(True)`, and `plt.ylim()` to format graphs for readability.
+            * **Display:** `plt.show()` renders the graph window.
             """)
             
     with col_right:
@@ -1310,8 +1440,8 @@ elif current_selection == "4.3 Matplotlib Data Visualization":
 elif current_selection == "4.4 Pandas Series & DataFrames":
     st.title("Topic 4.4: Pandas Series & DataFrames")
     st.markdown(
-        "**Overview:** Pandas is a powerful Python library for data analysis and manipulation[cite: 254]. "
-        "It provides two primary data structures: **Series** (1D labeled array) and **DataFrame** (2D tabular structure with rows and columns, similar to an Excel table)[cite: 255, 260]."
+        "**Overview:** Pandas is a powerful Python library for data analysis and manipulation. "
+        "It provides two primary data structures: **Series** (1D labeled array) and **DataFrame** (2D tabular structure with rows and columns, similar to an Excel table)."
     )
     st.markdown("---")
     
@@ -1320,10 +1450,10 @@ elif current_selection == "4.4 Pandas Series & DataFrames":
         with st.container(border=True):
             st.subheader("Series & DataFrame Operations")
             st.markdown("""
-            * **Series (`pd.Series`):** A one-dimensional labeled array where values can be accessed, updated, added, or dropped by label index[cite: 256, 260].
-            * **DataFrame (`pd.DataFrame`):** A 2D table created using dictionaries or imported files[cite: 257, 258].
-            * **Column Selection:** Access single columns (`df['col']`) or multiple columns (`df[['col1', 'col2']]`)[cite: 257, 258, 262].
-            * **Row Selection:** Use `.iloc[index]` for integer position indexing or `.loc[label, col]` for label-based lookup[cite: 262].
+            * **Series (`pd.Series`):** A one-dimensional labeled array where values can be accessed, updated, added, or dropped by label index.
+            * **DataFrame (`pd.DataFrame`):** A 2D table created using dictionaries or imported files.
+            * **Column Selection:** Access single columns (`df['col']`) or multiple columns (`df[['col1', 'col2']]`).
+            * **Row Selection:** Use `.iloc[index]` for integer position indexing or `.loc[label, col]` for label-based lookup.
             """)
             
     with col_right:
@@ -1352,7 +1482,7 @@ elif current_selection == "4.4 Pandas Series & DataFrames":
 elif current_selection == "4.5 Pandas Data Pre-Processing":
     st.title("Topic 4.5: Pandas Data Pre-Processing")
     st.markdown(
-        "**Overview:** Data pre-processing involves cleaning, transforming, and organizing raw data to improve accuracy and quality before analysis[cite: 263]."
+        "**Overview:** Data pre-processing involves cleaning, transforming, and organizing raw data to improve accuracy and quality before analysis."
     )
     st.markdown("---")
     
@@ -1361,12 +1491,12 @@ elif current_selection == "4.5 Pandas Data Pre-Processing":
         with st.container(border=True):
             st.subheader("Pre-Processing Methods")
             st.markdown("""
-            * **Data Importing:** Load external files efficiently using `pd.read_csv()` or `pd.read_excel()`[cite: 265, 266].
-            * **Duplicates:** Detect duplicate records with `.duplicated()` and remove them using `.drop_duplicates()`[cite: 267, 268].
-            * **Missing Values:** Identify missing values (`NaN`) with `.isnull().sum()` and fill or drop them using `.fillna()` or `.dropna()`[cite: 269, 270].
-            * **Dropping & Filtering:** Remove unnecessary rows/columns with `.drop()` or select specific subsets using conditional filters[cite: 271, 272, 273, 274].
-            * **Sorting & Grouping:** Order data using `.sort_values()` and aggregate categories with `.groupby()`[cite: 275, 276, 277, 278].
-            * **Resampling & Concatenation:** Change time-series frequency using `.resample()` and merge datasets with `pd.concat()`[cite: 279, 280, 281, 282].
+            * **Data Importing:** Load external files efficiently using `pd.read_csv()` or `pd.read_excel()`.
+            * **Duplicates:** Detect duplicate records with `.duplicated()` and remove them using `.drop_duplicates()`.
+            * **Missing Values:** Identify missing values (`NaN`) with `.isnull().sum()` and fill or drop them using `.fillna()` or `.dropna()`.
+            * **Dropping & Filtering:** Remove unnecessary rows/columns with `.drop()` or select specific subsets using conditional filters.
+            * **Sorting & Grouping:** Order data using `.sort_values()` and aggregate categories with `.groupby()`.
+            * **Resampling & Concatenation:** Change time-series frequency using `.resample()` and merge datasets with `pd.concat()`.
             """)
             
     with col_right:
