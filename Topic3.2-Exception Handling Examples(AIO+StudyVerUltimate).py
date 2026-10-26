@@ -992,7 +992,7 @@ elif current_selection == "3.3 Exception Handling (Try & Except)":
     with col_right:
         with st.container(border=True):
             st.subheader("Coding Challenge Lab")
-            st.markdown("**Task:** Write a `try..except` block that attempts to convert an invalid string `"xyz"` into an integer, catching the `ValueError` and printing a custom error message.")
+            st.markdown('**Task:** Write a `try..except` block that attempts to convert an invalid string "xyz" into an integer, catching the `ValueError` and printing a custom error message.')
             
             with st.expander("Need Help? (Coding Assistant & Hints)"):
                 st.markdown("""
