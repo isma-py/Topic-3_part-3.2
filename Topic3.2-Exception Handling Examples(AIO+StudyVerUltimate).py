@@ -576,7 +576,7 @@ st.sidebar.markdown("**Created by IsmaPY**")
 
 
 # =========================================================
-# Main Content Based on Selected Subtopic (Left: Study Notes | Right: Coding Challenge & Assistant Lab)
+# Main Content Based on Selected Subtopic (Left: Study Notes | Right: Coding Challenge & Enhanced Assistant Lab)
 # =========================================================
 current_selection = st.session_state.get('current_subtopic', 'Course Overview')
 
@@ -585,7 +585,7 @@ if current_selection == "Course Overview":
     st.markdown(
         "**Welcome to your exam preparation platform!** "
         "Use the collapsible topics in the sidebar to navigate through individual subtopics, study notes, "
-        "and try the **Coding Challenges with Assistant Support** on the right side of each page."
+        "and try the **Coding Challenges with Enhanced Assistant Support** on the right side of each page."
     )
     st.markdown("---")
     st.info("Topics 1, 2, 3, and 4 are fully loaded with study notes and interactive coding labs!")
@@ -616,11 +616,20 @@ elif current_selection == "1.1 Introduction & Identifiers":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Write code from scratch to create a variable `empName` with your name, a variable `age` as an integer, cast `age` to a string using `str()`, and print both along with the type of the casted age.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** Assign string values using quotes: `empName = "Ali"`
-                * **Hint 2:** Cast an integer variable `x` to string using `str(x)`
-                * **Hint 3:** Use `print()` to output variables and `type()` to check data types.
+                **Step-by-Step Logic:**
+                1. Declare string variable: `empName = "Your Name"`
+                2. Declare integer variable: `age = 22`
+                3. Cast age: `age_str = str(age)`
+                4. Output values and types using `print()` and `type()`.
+                
+                **Starter Code Skeleton:**
+                ```python
+                empName = "Your Name"
+                age = 22
+                # Type your casting and print statements below:
+                ```
                 """)
             
             user_code_11 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_11")
@@ -652,11 +661,22 @@ elif current_selection == "1.2 Data Structures (Collections)":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Create a list of 3 fruits, append a 4th fruit using `.append()`, and create a dictionary with student info (`Name` and `Score`) and print them.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** Lists use square brackets: `my_list = ["apple", "banana", "grape"]`
-                * **Hint 2:** Add items to a list with `my_list.append("orange")`
-                * **Hint 3:** Dictionaries use key-value pairs: `my_dict = {"Name": "Siti", "Score": 95}`
+                **Step-by-Step Logic:**
+                1. Define list: `fruits = ["apple", "banana", "mango"]`
+                2. Append item: `fruits.append("orange")`
+                3. Define dictionary: `student = {"Name": "Ali", "Score": 88}`
+                4. Print both structures.
+                
+                **Starter Code Skeleton:**
+                ```python
+                fruits = ["apple", "banana", "mango"]
+                # Append fourth fruit here:
+                
+                student = {"Name": "Ali", "Score": 88}
+                # Print results here:
+                ```
                 """)
             
             user_code_12 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_12")
@@ -688,11 +708,20 @@ elif current_selection == "1.3 Types of Operators":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Define two variables `a = 15` and `b = 4`. Calculate and print their floor division (`//`), modulus (`%`), and test if `a > 10 and b < 10`.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** Floor division uses `//`
-                * **Hint 2:** Modulus remainder uses `%`
-                * **Hint 3:** Combine comparison conditions using logical `and`
+                **Step-by-Step Logic:**
+                1. Assign values: `a = 15`, `b = 4`
+                2. Floor division: `a // b`
+                3. Modulus: `a % b`
+                4. Logical test: `(a > 10) and (b < 10)`
+                
+                **Starter Code Skeleton:**
+                ```python
+                a = 15
+                b = 4
+                # Perform arithmetic and logical checks below:
+                ```
                 """)
             
             user_code_13 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_13")
@@ -724,10 +753,19 @@ elif current_selection == "1.4 Control Structures & Loops":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Write a `for` loop from 1 to 5 using `range(1, 6)`. If the number is 3, use `continue` to skip it. Otherwise, print the number.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `for i in range(1, 6):` loops from 1 to 5.
-                * **Hint 2:** Inside the loop, check `if i == 3:` then `continue`
+                **Step-by-Step Logic:**
+                1. Setup loop: `for i in range(1, 6):`
+                2. Add condition: `if i == 3: continue`
+                3. Print iteration value in loop body.
+                
+                **Starter Code Skeleton:**
+                ```python
+                for i in range(1, 6):
+                    # Add condition and print statement here:
+                    pass
+                ```
                 """)
             
             user_code_14 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_14")
@@ -758,10 +796,21 @@ elif current_selection == "2.1 Functions & Arguments":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Define a function named `calc_rectangle(length, width=10)` that calculates and returns the area of a rectangle. Test it with and without providing the width.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** Use `def calc_rectangle(length, width=10):`
-                * **Hint 2:** Return the product: `return length * width`
+                **Step-by-Step Logic:**
+                1. Define function with default argument: `def calc_rectangle(length, width=10):`
+                2. Return calculation: `return length * width`
+                3. Call function with 1 argument and 2 arguments.
+                
+                **Starter Code Skeleton:**
+                ```python
+                def calc_rectangle(length, width=10):
+                    # Write return statement here:
+                    pass
+                
+                # Test function calls here:
+                ```
                 """)
             
             user_code_21 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_21")
@@ -791,10 +840,24 @@ elif current_selection == "2.2 Classes & Objects":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Create a class named `Student` with an `__init__` constructor taking `name` and `matric`. Add a method `display()` that prints student details, then instantiate and call it.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** Define class: `class Student:`
-                * **Hint 2:** Add constructor: `def __init__(self, name, matric):` and assign `self.name = name`
+                **Step-by-Step Logic:**
+                1. Define class header: `class Student:`
+                2. Add constructor: `def __init__(self, name, matric):` and bind `self.name = name`, `self.matric = matric`.
+                3. Add display method and instantiate an object.
+                
+                **Starter Code Skeleton:**
+                ```python
+                class Student:
+                    def __init__(self, name, matric):
+                        # Assign attributes here:
+                        pass
+                        
+                    def display(self):
+                        # Print details here:
+                        pass
+                ```
                 """)
             
             user_code_22 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_22")
@@ -826,10 +889,18 @@ elif current_selection == "2.3 Modules & Import":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Import the `random` module, generate a random integer between 1 and 10 using `random.randint()`, and print the result.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `import random`
-                * **Hint 2:** `val = random.randint(1, 10)`
+                **Step-by-Step Logic:**
+                1. Import statement: `import random`
+                2. Generate number: `num = random.randint(1, 10)`
+                3. Print output.
+                
+                **Starter Code Skeleton:**
+                ```python
+                import random
+                # Generate and print random integer here:
+                ```
                 """)
             
             user_code_23 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_23")
@@ -859,10 +930,23 @@ elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymor
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Create a parent class `Device` with a method `power_on()`, and a child class `Router` that inherits from `Device` and overrides `power_on()` to print 'Router booting up'. Test it.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `class Router(Device):`
-                * **Hint 2:** Define matching method name in child class to override.
+                **Step-by-Step Logic:**
+                1. Create parent class `Device` with `power_on(self)`.
+                2. Create child class `Router(Device)` and define `power_on(self)` with custom print text.
+                3. Instantiate and test.
+                
+                **Starter Code Skeleton:**
+                ```python
+                class Device:
+                    def power_on(self):
+                        print("Device powering on")
+                        
+                class Router(Device):
+                    # Override power_on method here:
+                    pass
+                ```
                 """)
             
             user_code_24 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_24")
@@ -894,10 +978,24 @@ elif current_selection == "2.5 Magic Methods":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Create a class `Book` with `__init__` for `title` and `pages`. Implement `__str__` to return a formatted string like 'Book: [Title], Pages: [Pages]' and print an instance.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `def __str__(self):`
-                * **Hint 2:** Return string using `return f"Book: {self.title}"`
+                **Step-by-Step Logic:**
+                1. Define class `Book` with `__init__(self, title, pages)`.
+                2. Implement `def __str__(self):` returning formatted string.
+                3. Create object and print.
+                
+                **Starter Code Skeleton:**
+                ```python
+                class Book:
+                    def __init__(self, title, pages):
+                        self.title = title
+                        self.pages = pages
+                        
+                    def __str__(self):
+                        # Return string format here:
+                        pass
+                ```
                 """)
             
             user_code_25 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_25")
@@ -928,10 +1026,16 @@ elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Write Streamlit commands to display a title `st.title('Exam Dashboard')` and a success box `st.success('Ready for exam!')`.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `st.title("Your Title Here")`
-                * **Hint 2:** `st.success("Your message here")`
+                **Step-by-Step Logic:**
+                1. Call `st.title("Exam Dashboard")`
+                2. Call `st.success("Ready for exam!")`
+                
+                **Starter Code Skeleton:**
+                ```python
+                # Write Streamlit UI elements here:
+                ```
                 """)
             
             user_code_31 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_31")
@@ -962,10 +1066,16 @@ elif current_selection == "3.2 User Events & Interactive Widgets":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Use `st.text_input` to capture a student's username into a variable `username` and display a greeting if `username` is not empty.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `username = st.text_input("Enter name:")`
-                * **Hint 2:** `if username: st.write(f"Hello {username}")`
+                **Step-by-Step Logic:**
+                1. Capture input: `username = st.text_input("Enter username:")`
+                2. Add condition: `if username: st.write(f"Hello {username}")`
+                
+                **Starter Code Skeleton:**
+                ```python
+                # Capture and check username input here:
+                ```
                 """)
             
             user_code_32 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_32")
@@ -994,10 +1104,21 @@ elif current_selection == "3.3 Exception Handling (Try & Except)":
             st.subheader("Coding Challenge Lab")
             st.markdown('**Task:** Write a `try..except` block that attempts to convert an invalid string "xyz" into an integer, catching the `ValueError` and printing a custom error message.')
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `try: int("xyz")`
-                * **Hint 2:** `except ValueError: print("Caught invalid number format!")`
+                **Step-by-Step Logic:**
+                1. Open `try:` block and add `int("xyz")`.
+                2. Open `except ValueError:` block and print custom message.
+                
+                **Starter Code Skeleton:**
+                ```python
+                try:
+                    # Attempt conversion here:
+                    pass
+                except ValueError:
+                    # Handle error here:
+                    pass
+                ```
                 """)
             
             user_code_33 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_33")
@@ -1026,9 +1147,26 @@ elif current_selection == "3.4 Exception Handling (Else & Finally)":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Write a full `try..except..else..finally` block that divides 10 by 2 safely, prints success in `else`, and prints completion in `finally`.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** Structure: `try: ... except: ... else: ... finally: ...`
+                **Step-by-Step Logic:**
+                1. `try: result = 10 / 2`
+                2. `except ZeroDivisionError:`
+                3. `else: print(result)`
+                4. `finally: print("Done")`
+                
+                **Starter Code Skeleton:**
+                ```python
+                try:
+                    # Division logic here:
+                    pass
+                except ZeroDivisionError:
+                    pass
+                else:
+                    pass
+                finally:
+                    pass
+                ```
                 """)
             
             user_code_34 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_34")
@@ -1062,10 +1200,18 @@ elif current_selection == "4.1 NumPy ndarray & Creation Routines":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Import `numpy as np`, create a 2D array with values `[[1, 2], [3, 4]]`, and print its `.shape` and `.size`.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `import numpy as np`
-                * **Hint 2:** `arr = np.array([[1, 2], [3, 4]])` then `print(arr.shape, arr.size)`
+                **Step-by-Step Logic:**
+                1. Import NumPy: `import numpy as np`
+                2. Create array: `arr = np.array([[1, 2], [3, 4]])`
+                3. Print attributes `arr.shape` and `arr.size`.
+                
+                **Starter Code Skeleton:**
+                ```python
+                import numpy as np
+                # Create array and print shape/size here:
+                ```
                 """)
             
             user_code_41 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_41")
@@ -1098,10 +1244,18 @@ elif current_selection == "4.2 Indexing, Slicing & Array Manipulation":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Create a 1D array using `np.arange(1, 7)` and reshape it into a $2 \times 3$ 2D matrix using `.reshape(2, 3)`.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `arr = np.arange(1, 7)`
-                * **Hint 2:** `matrix = arr.reshape(2, 3)`
+                **Step-by-Step Logic:**
+                1. `import numpy as np`
+                2. `arr = np.arange(1, 7)`
+                3. `matrix = arr.reshape(2, 3)`
+                
+                **Starter Code Skeleton:**
+                ```python
+                import numpy as np
+                # Create range and reshape here:
+                ```
                 """)
             
             user_code_42 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_42")
@@ -1133,10 +1287,20 @@ elif current_selection == "4.3 Matplotlib Data Visualization":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Setup x and y data arrays using NumPy (`x = [1, 2, 3, 4]`, `y = [10, 20, 25, 30]`) and prepare the Matplotlib plot structure (`plt.plot(x, y)`).")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `import matplotlib.pyplot as plt`
-                * **Hint 2:** `plt.plot(x, y)`
+                **Step-by-Step Logic:**
+                1. `import matplotlib.pyplot as plt`
+                2. Define lists `x` and `y`.
+                3. Call `plt.plot(x, y)`.
+                
+                **Starter Code Skeleton:**
+                ```python
+                import matplotlib.pyplot as plt
+                x = [1, 2, 3, 4]
+                y = [10, 20, 25, 30]
+                # Plot data here:
+                ```
                 """)
             
             user_code_43 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_43")
@@ -1167,10 +1331,18 @@ elif current_selection == "4.4 Pandas Series & DataFrames":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Import `pandas as pd`, create a DataFrame from a dictionary with columns `Name` and `Score`, and print the DataFrame.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `import pandas as pd`
-                * **Hint 2:** `df = pd.DataFrame({"Name": ["Ali", "Siti"], "Score": [88, 92]})`
+                **Step-by-Step Logic:**
+                1. `import pandas as pd`
+                2. Define dictionary `data = {"Name": ["Ali", "Siti"], "Score": [88, 92]}`
+                3. Create `df = pd.DataFrame(data)` and print.
+                
+                **Starter Code Skeleton:**
+                ```python
+                import pandas as pd
+                # Create DataFrame and print here:
+                ```
                 """)
             
             user_code_44 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_44")
@@ -1202,10 +1374,19 @@ elif current_selection == "4.5 Pandas Data Pre-Processing":
             st.subheader("Coding Challenge Lab")
             st.markdown("**Task:** Create a DataFrame with duplicate rows, and use `.drop_duplicates()` to clean the data and print the result.")
             
-            with st.expander("Need Help? (Coding Assistant & Hints)"):
+            with st.expander("Coding Assistant & Step-by-Step Guidance"):
                 st.markdown("""
-                * **Hint 1:** `df = pd.DataFrame({"Item": ["Pen", "Book", "Pen"]})`
-                * **Hint 2:** `df_clean = df.drop_duplicates()`
+                **Step-by-Step Logic:**
+                1. `import pandas as pd`
+                2. Create DataFrame with duplicate items.
+                3. Call `df.drop_duplicates()` and print result.
+                
+                **Starter Code Skeleton:**
+                ```python
+                import pandas as pd
+                df = pd.DataFrame({"Item": ["Pen", "Book", "Pen"]})
+                # Drop duplicates and print here:
+                ```
                 """)
             
             user_code_45 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_45")
