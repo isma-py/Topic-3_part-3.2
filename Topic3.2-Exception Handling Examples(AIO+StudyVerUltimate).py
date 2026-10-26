@@ -328,6 +328,19 @@ curriculum = {
         "2.3 Modules & Import",
         "2.4 OOP Concepts (Inheritance, Encapsulation, Polymorphism)",
         "2.5 Magic Methods"
+    ],
+    "Topic 3: GUI Design & Exception Handling": [
+        "3.1 Introduction to GUI & Streamlit UI",
+        "3.2 User Events & Interactive Widgets",
+        "3.3 Exception Handling (Try & Except)",
+        "3.4 Exception Handling (Else & Finally)"
+    ],
+    "Topic 4: Matrix Processing & Data Analysis": [
+        "4.1 NumPy ndarray & Creation Routines",
+        "4.2 Indexing, Slicing & Array Manipulation",
+        "4.3 Matplotlib Data Visualization",
+        "4.4 Pandas Series & DataFrames",
+        "4.5 Pandas Data Pre-Processing"
     ]
 }
 
@@ -570,12 +583,12 @@ current_selection = st.session_state.get('current_subtopic', 'Course Overview')
 if current_selection == "Course Overview":
     st.title("Python Programming Exam Preparation")
     st.markdown(
-        "**Welcome to your 9-day exam preparation platform!** "
+        "**Welcome to your exam preparation platform!** "
         "Use the collapsible topics in the sidebar to navigate through individual subtopics, study notes, "
         "reference code, and interactive coding sandboxes."
     )
     st.markdown("---")
-    st.info("Topic 1 and Topic 2 are fully loaded! Choose a subtopic from the sidebar to begin your review.")
+    st.info("Topics 1, 2, 3, and 4 are fully loaded! Choose a subtopic from the sidebar to begin your review.")
 
 elif current_selection == "1.1 Introduction & Identifiers":
     st.title("Topic 1.1: Introduction & Python Identifiers")
@@ -815,6 +828,243 @@ elif current_selection == "2.5 Magic Methods":
             sandbox_code_25 = st.text_area("Test Magic Methods:", value='class Point:\n    def __init__(self, x):\n        self.x = x\n    def __add__(self, other):\n        return Point(self.x + other.x)\n    def __str__(self):\n        return f"Point({self.x})"\n\np1 = Point(5)\np2 = Point(10)\nprint(p1 + p2)', height=180, key="sandbox_25")
             if st.button("Run Code", key="run_25"):
                 execute_and_render(sandbox_code_25, st.container())
+
+elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
+    st.title("Topic 3.1: Introduction to GUI & Streamlit UI")
+    st.markdown(
+        "**Overview:** A Graphical User Interface (GUI) allows users to interact visually using buttons, text boxes, and sliders instead of console commands[cite: 184]. "
+        "Streamlit is a Python framework that turns Python scripts into interactive web applications without HTML, CSS, or JavaScript[cite: 186]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("GUI Frameworks & Streamlit Setup")
+            st.markdown("""
+            * **GUI Options:** Tkinter (built-in), PyQt / PySide, Streamlit (web-based), and Kivy (cross-platform/mobile)[cite: 184].
+            * **Installation:** Install Streamlit via terminal using `pip install streamlit` or `python -m pip install streamlit`[cite: 186].
+            * **Creating & Running:** Save your file as `app.py` and run it in the terminal using `streamlit run app.py`[cite: 187, 188].
+            * **Deployment:** Public GitHub repositories containing `app.py` and `requirements.txt` can be deployed on Streamlit Community Cloud[cite: 189, 190, 191].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_31 = st.text_area("Test Streamlit UI Commands:", value='st.title("My First Streamlit App")\nst.write("Welcome to Streamlit!")\nname = "Nurul"\nst.success(f"Hello {name}!")', height=180, key="sandbox_31")
+            if st.button("Run Code", key="run_31"):
+                execute_and_render(sandbox_code_31, st.container())
+
+elif current_selection == "3.2 User Events & Interactive Widgets":
+    st.title("Topic 3.2: User Events & Interactive Widgets")
+    st.markdown(
+        "**Overview:** Streamlit automatically updates and reruns the app whenever a user interacts with a widget[cite: 193]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Common Interactive Widgets")
+            st.markdown("""
+            * **Text Input (`st.text_input`):** Captures single-line text input from users[cite: 193].
+            * **Button (`st.button`):** Triggers actions when clicked[cite: 194].
+            * **Checkbox (`st.checkbox`):** Allows boolean true/false toggle options[cite: 195].
+            * **Radio Buttons (`st.radio`):** Selects a single option from a list[cite: 196].
+            * **Selectbox / Dropdown (`st.selectbox`):** Selects an item from a drop-down menu list[cite: 197].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_32 = st.text_area("Test Widgets:", value='fruit = "Apple"\nprint("Selected fruit:", fruit)\nchoice = True\nif choice:\n    print("Option selected!")', height=180, key="sandbox_32")
+            if st.button("Run Code", key="run_32"):
+                execute_and_render(sandbox_code_32, st.container())
+
+elif current_selection == "3.3 Exception Handling (Try & Except)":
+    st.title("Topic 3.3: Exception Handling (Try & Except)")
+    st.markdown(
+        "**Overview:** Exception handling allows programs to catch and manage runtime errors gracefully instead of crashing, making code robust and user-friendly[cite: 202]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Try and Except Blocks")
+            st.markdown("""
+            * **`try` Block:** Used to test and check a block of code for errors during execution[cite: 204]. Executes when there are no errors[cite: 204].
+            * **`except` Block:** Executes whenever the program encounters an error in the preceding `try` block[cite: 204].
+            * **Catching Specific Errors:** You can catch specific exceptions like `ValueError` or `ZeroDivisionError` to display customized error messages[cite: 200, 205].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_33 = st.text_area("Test Try-Except:", value='try:\n    num = int("abc")\n    print(num)\nexcept ValueError:\n    print("Caught ValueError: Invalid number format.")', height=180, key="sandbox_33")
+            if st.button("Run Code", key="run_33"):
+                execute_and_render(sandbox_code_33, st.container())
+
+elif current_selection == "3.4 Exception Handling (Else & Finally)":
+    st.title("Topic 3.4: Exception Handling (Else & Finally)")
+    st.markdown(
+        "**Overview:** Advanced exception handling blocks (`else` and `finally`) provide precise control over code execution flow depending on whether errors occurred[cite: 207, 210]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Else & Finally Clauses")
+            st.markdown("""
+            * **`else` Clause:** Defines a block of code to be executed **only if no errors were raised** in the `try` block[cite: 207].
+            * **`finally` Clause:** Always executes after the `try` and `except` blocks terminate, **regardless** of whether an error occurred or not[cite: 210].
+            * **Raising Exceptions (`raise`):** Used to manually trigger custom exceptions (e.g., `raise ValueError("Invalid Email")`)[cite: 212, 213].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_34 = st.text_area("Test Else-Finally:", value='try:\n    result = 10 / 2\nexcept ZeroDivisionError:\n    print("Division by zero!")\nelse:\n    print("Success! Result:", result)\nfinally:\n    print("Execution complete.")', height=180, key="sandbox_34")
+            if st.button("Run Code", key="run_34"):
+                execute_and_render(sandbox_code_34, st.container())
+
+elif current_selection == "4.1 NumPy ndarray & Creation Routines":
+    st.title("Topic 4.1: NumPy ndarray & Creation Routines")
+    st.markdown(
+        "**Overview:** NumPy (Numerical Python) is the core library for matrix processing in Python[cite: 218, 226]. "
+        "Its central data structure is `ndarray` (n-dimensional array), which is significantly faster and more memory-efficient than Python lists because elements are stored in contiguous memory[cite: 226]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Array Attributes & Creation Functions")
+            st.markdown("""
+            * **Core Attributes:** `.shape` (rows, columns)[cite: 232], `.ndim` (number of dimensions)[cite: 232], `.size` (total elements)[cite: 232], `.dtype` (data type)[cite: 232], and `.nbytes` (total memory)[cite: 232].
+            * **`np.zeros(shape)` / `np.ones(shape)`:** Creates arrays filled with zeros or ones[cite: 235].
+            * **`np.full(shape, value)`:** Creates an array filled with a specified value[cite: 235].
+            * **`np.eye(n)`:** Generates an $n \times n$ identity matrix[cite: 235].
+            * **`np.arange(start, stop, step)`:** Returns evenly spaced values within a given range[cite: 235].
+            * **`np.linspace(start, stop, num)`:** Generates a specified number of evenly spaced values[cite: 235].
+            * **`np.random.randint(low, high, size)`:** Generates random integers within a range[cite: 235].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_41 = st.text_area("Test NumPy Array Creation:", value='import numpy as np\narr = np.array([[10, 20, 30], [40, 50, 60]])\nprint("Array Shape:", arr.shape)\nprint("Array Size:", arr.size)\nzeros = np.zeros((2, 2))\nprint("Zeros:\\n", zeros)', height=180, key="sandbox_41")
+            if st.button("Run Code", key="run_41"):
+                execute_and_render(sandbox_code_41, st.container())
+
+elif current_selection == "4.2 Indexing, Slicing & Array Manipulation":
+    st.title("Topic 4.2: Indexing, Slicing & Array Manipulation")
+    st.markdown(
+        "**Overview:** NumPy allows precise data extraction via multi-dimensional indexing and slicing (`arr[row, col]` and `start:stop:step`), "
+        "along with structural manipulation without altering underlying data[cite: 238, 240, 244]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Manipulation & Slicing Operations")
+            st.markdown("""
+            * **Indexing (`arr[row, col]`):** Accesses specific elements; negative indices count from the end[cite: 238, 239].
+            * **Slicing (`arr[start:stop, start:stop]`):** Extracts portions of arrays (stop index is exclusive)[cite: 240, 241].
+            * **`reshape(shape)`:** Changes array dimensions without altering data[cite: 244, 245].
+            * **`flatten()`:** Converts a multi-dimensional array into a 1D array[cite: 244, 245].
+            * **`transpose()` or `.T`:** Flips rows and columns[cite: 244, 245].
+            * **Stacking & Concatenation:** `np.hstack()`, `np.vstack()`, and `np.concatenate(axis=0/1)` combine arrays horizontally or vertically[cite: 244, 246].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_42 = st.text_area("Test Indexing & Manipulation:", value='import numpy as np\narr = np.array([[1, 2, 3], [4, 5, 6]])\nprint("Element [0,1]:", arr[0, 1])\nprint("Reshaped:\\n", arr.reshape(3, 2))\nprint("Transposed:\\n", arr.T)', height=180, key="sandbox_42")
+            if st.button("Run Code", key="run_42"):
+                execute_and_render(sandbox_code_42, st.container())
+
+elif current_selection == "4.3 Matplotlib Data Visualization":
+    st.title("Topic 4.3: Matplotlib Data Visualization")
+    st.markdown(
+        "**Overview:** Matplotlib is a powerful Python visualization library that integrates seamlessly with NumPy arrays "
+        "to plot mathematical functions, inspect trends, and present analytical results[cite: 221]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Key Plotting Functions")
+            st.markdown("""
+            * **Installation:** Install via terminal using `pip install matplotlib`[cite: 222].
+            * **Line Plots (`plt.plot(x, y)`):** Connects data points with lines; supports custom markers like `marker='o'`[cite: 222, 223].
+            * **Scatter Plots (`plt.scatter(x, y)`):** Displays individual data points to show correlation between variables (e.g., exam score comparisons)[cite: 224].
+            * **Customization:** Use `plt.title()`, `plt.xlabel()`, `plt.ylabel()`, `plt.grid(True)`, and `plt.ylim()` to format graphs for readability[cite: 222, 223, 224].
+            * **Display:** `plt.show()` renders the graph window[cite: 222, 223, 224].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_43 = st.text_area("Test Matplotlib Code Structure:", value='import numpy as np\nimport matplotlib.pyplot as plt\nx = np.arange(0, 5, 1)\ny = x ** 2\nprint("X values:", x)\nprint("Y values:", y)\n# plt.plot(x, y)\n# plt.show()', height=180, key="sandbox_43")
+            if st.button("Run Code", key="run_43"):
+                execute_and_render(sandbox_code_43, st.container())
+
+elif current_selection == "4.4 Pandas Series & DataFrames":
+    st.title("Topic 4.4: Pandas Series & DataFrames")
+    st.markdown(
+        "**Overview:** Pandas is a powerful Python library for data analysis and manipulation[cite: 254]. "
+        "It provides two primary data structures: **Series** (1D labeled array) and **DataFrame** (2D tabular structure with rows and columns, similar to an Excel table)[cite: 255, 260]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Series & DataFrame Operations")
+            st.markdown("""
+            * **Series (`pd.Series`):** A one-dimensional labeled array where values can be accessed, updated, added, or dropped by label index[cite: 256, 260].
+            * **DataFrame (`pd.DataFrame`):** A 2D table created using dictionaries or imported files[cite: 257, 258].
+            * **Column Selection:** Access single columns (`df['col']`) or multiple columns (`df[['col1', 'col2']]`)[cite: 257, 258, 262].
+            * **Row Selection:** Use `.iloc[index]` for integer position indexing or `.loc[label, col]` for label-based lookup[cite: 262].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_44 = st.text_area("Test Pandas Structures:", value='import pandas as pd\nscores = pd.Series([78, 85, 90], index=["Ali", "Siti", "John"])\nprint("Series:\\n", scores)\ndata = {"Name": ["Ali", "Siti"], "Math": [78, 85]}\ndf = pd.DataFrame(data)\nprint("\\nDataFrame:\\n", df)', height=180, key="sandbox_44")
+            if st.button("Run Code", key="run_44"):
+                execute_and_render(sandbox_code_44, st.container())
+
+elif current_selection == "4.5 Pandas Data Pre-Processing":
+    st.title("Topic 4.5: Pandas Data Pre-Processing")
+    st.markdown(
+        "**Overview:** Data pre-processing involves cleaning, transforming, and organizing raw data to improve accuracy and quality before analysis[cite: 263]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Pre-Processing Methods")
+            st.markdown("""
+            * **Data Importing:** Load external files efficiently using `pd.read_csv()` or `pd.read_excel()`[cite: 265, 266].
+            * **Duplicates:** Detect duplicate records with `.duplicated()` and remove them using `.drop_duplicates()`[cite: 267, 268].
+            * **Missing Values:** Identify missing values (`NaN`) with `.isnull().sum()` and fill or drop them using `.fillna()` or `.dropna()`[cite: 269, 270].
+            * **Dropping & Filtering:** Remove unnecessary rows/columns with `.drop()` or select specific subsets using conditional filters[cite: 271, 272, 273, 274].
+            * **Sorting & Grouping:** Order data using `.sort_values()` and aggregate categories with `.groupby()`[cite: 275, 276, 277, 278].
+            * **Resampling & Concatenation:** Change time-series frequency using `.resample()` and merge datasets with `pd.concat()`[cite: 279, 280, 281, 282].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_45 = st.text_area("Test Pre-Processing:", value='import pandas as pd\ndf = pd.DataFrame({"Name": ["Ali", "Siti", "Ali"], "Math": [78, 85, 78]})\nprint("Before drop duplicates:\\n", df)\ndf = df.drop_duplicates()\nprint("\\nAfter drop duplicates:\\n", df)', height=180, key="sandbox_45")
+            if st.button("Run Code", key="run_45"):
+                execute_and_render(sandbox_code_45, st.container())
 
 # Footer Signature
 st.markdown('<div class="footer-text">Created by IsmaPY</div>', unsafe_allow_html=True)
