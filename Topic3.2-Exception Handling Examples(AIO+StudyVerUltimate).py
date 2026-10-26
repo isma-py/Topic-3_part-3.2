@@ -13,7 +13,7 @@ LOCAL_TZ = ZoneInfo("Asia/Kuala_Lumpur")
 
 # Page Configuration
 st.set_page_config(
-    page_title="Topic 3.2 Exception Handling", 
+    page_title="Python Exam Preparation", 
     layout="wide"
 )
 
@@ -163,8 +163,8 @@ def show_light_mode_dialog():
         st.rerun()
 
 
-def send_discord_log(user_name, camera_file_bytes):
-    """Sends login timestamp (GMT+8), student username, and face capture image to Discord Webhook."""
+def send_discord_log(user_name):
+    """Sends login timestamp (GMT+8) and student username to Discord Webhook."""
     now = datetime.now(LOCAL_TZ)
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%I:%M:%S %p")
@@ -178,21 +178,15 @@ def send_discord_log(user_name, camera_file_bytes):
                     {"name": "Student Name", "value": f"**{user_name}**", "inline": True},
                     {"name": "Date", "value": date_str, "inline": True},
                     {"name": "Time (GMT+8)", "value": time_str, "inline": True},
-                    {"name": "Topic", "value": "Topic 3.2 Exception Handling", "inline": False}
+                    {"name": "Platform", "value": "Python Exam Preparation Tool", "inline": False}
                 ],
-                "image": {"url": "attachment://face_capture.png"},
                 "footer": {"text": "Python Lab Environment | Attendance Verification"}
             }
         ]
     }
 
-    files = {
-        "payload_json": (None, json.dumps(payload), "application/json"),
-        "file": ("face_capture.png", camera_file_bytes, "image/png")
-    }
-
     try:
-        requests.post(LOGIN_WEBHOOK_URL, files=files, timeout=10)
+        requests.post(LOGIN_WEBHOOK_URL, json=payload, timeout=10)
     except Exception as e:
         st.error(f"Failed to log access: {e}")
 
@@ -236,7 +230,7 @@ def send_bug_report(user_name, bug_category, bug_description, bug_file_bytes=Non
 
 
 # =========================================================
-# LOGIN GATEKEEPER SCREEN (NAME + MANDATORY FACE CAPTURE)
+# LOGIN GATEKEEPER SCREEN (NAME ONLY)
 # =========================================================
 if not st.session_state.authenticated:
     _, col_main, _ = st.columns([1, 2, 1])
@@ -244,13 +238,10 @@ if not st.session_state.authenticated:
     with col_main:
         st.markdown("<br>", unsafe_allow_html=True)
         with st.container(border=True):
-            st.title("Python Lab Access Gateway")
-            st.markdown("Please enter your full name and take a face photo to verify attendance to log in")
+            st.title("Python Exam Prep Gateway")
+            st.markdown("Please enter your full name to log in")
             
             student_name = st.text_input("Full Name:", key="student_name_input", placeholder="e.g. John Doe")
-            
-            st.markdown("**Face Verification Capture:**")
-            camera_photo = st.camera_input("Take a photo to proceed", key="login_camera_input")
             
             # Check if login is currently under a 3-minute cooldown
             now_login = datetime.now(LOCAL_TZ)
@@ -269,11 +260,8 @@ if not st.session_state.authenticated:
                 now = datetime.now(LOCAL_TZ)
                 if student_name.strip() == "":
                     st.error("Please enter your name before proceeding.")
-                elif camera_photo is None:
-                    st.error("Face capture is required! Please click 'Take Photo' above.")
                 else:
-                    file_bytes = camera_photo.getvalue()
-                    send_discord_log(student_name.strip(), file_bytes)
+                    send_discord_log(student_name.strip())
                     
                     st.session_state.last_login_time = now
                     st.session_state.authenticated = True
@@ -311,17 +299,14 @@ def execute_and_render(user_code, output_container):
 
 
 # Sidebar Navigation & Collapsible Sections
-st.sidebar.title("Python Lab Environment")
+st.sidebar.title("Python Study Tool")
 st.sidebar.caption(f"Logged in as: **{st.session_state.get('student_name', 'Student')}**")
-st.sidebar.subheader("Topic 3.2 Exception Handling")
+st.sidebar.subheader("Exam Preparation Syllabus")
 
 demo_choice = st.sidebar.radio(
     "Select Module:",
     [
-        "1. Basic Try-Except",
-        "2. Age Checker (Else Clause)",
-        "3. Name Submission (Finally Clause)",
-        "4. Email Validation (Custom Exception)"
+        "1. Course Overview & Introduction"
     ]
 )
 
@@ -545,259 +530,22 @@ with st.sidebar.expander("Report Issues / Bug", expanded=False):
                 st.error("Failed to send report. Please try again.")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("DFK50083 Python Programming\nTopic 3.0: GUI Design & Exception Handling")
+st.sidebar.caption("DFK50083 Python Programming\nExam Preparation Platform")
 st.sidebar.markdown("**Created by IsmaPY**")
 
 
 # =========================================================
-# Demo Modules
+# Demo Modules / Syllabus Content Placeholder
 # =========================================================
-if demo_choice == "1. Basic Try-Except":
-    st.title("Try Except Example")
+if demo_choice == "1. Course Overview & Introduction":
+    st.title("Python Programming Exam Preparation")
     st.markdown(
-        "**Explanation:** The `try` block tests a block of code for runtime errors, "
-        "while the `except` block catches and handles errors (such as entering invalid text "
-        "when converting to an integer) to prevent the program from crashing."
+        "**Welcome to your 9-day exam preparation platform!** "
+        "This tool is structured to help you review key programming concepts, test code snippets in real-time, "
+        "and prepare systematically for your upcoming evaluations."
     )
     st.markdown("---")
-    
-    col_left, col_right = st.columns(2)
-    
-    with col_left:
-        with st.container(border=True):
-            st.subheader("The Code")
-            num = st.text_input("Enter a number", key="d1_num")
-            if st.button("Check", key="d1_btn"):
-                try:
-                    st.success(int(num))
-                except:
-                    st.error("Invalid Input")
-
-            st.markdown("---")
-            ref_code_1 = """import streamlit as st
-
-st.title("Try Except Example")
-num = st.text_input("Enter a number")
-
-if st.button("Check"):
-    try:
-        st.success(int(num))
-    except:
-        st.error("Invalid Input")"""
-
-            with st.expander("View Reference Code", expanded=False):
-                st.code(ref_code_1, language="python")
-
-    with col_right:
-        with st.container(border=True):
-            st.subheader("Test Your Self")
-            user_code_1 = st.text_area("Your Code", value="", height=180, key="d1_sandbox")
-            
-            if "d1_has_run" not in st.session_state:
-                st.session_state.d1_has_run = False
-
-            if st.button("Run My Code", key="d1_run"):
-                st.session_state.d1_has_run = True
-
-            st.markdown("**Output of your code:**")
-            
-            with st.container(border=True):
-                if st.session_state.d1_has_run:
-                    execute_and_render(user_code_1, st.container())
-                else:
-                    st.info("Click 'Run My Code' to view output inside this frame.")
-
-elif demo_choice == "2. Age Checker (Else Clause)":
-    st.title("Age Checker")
-    st.markdown(
-        "**Explanation:** The `else` clause executes **only if no errors occurred** inside "
-        "the `try` block. In this example, if integer conversion succeeds, the `else` block "
-        "triggers the success message."
-    )
-    st.markdown("---")
-    
-    col_left, col_right = st.columns(2)
-    
-    with col_left:
-        with st.container(border=True):
-            st.subheader("The Code")
-            age = st.text_input("Enter your age", key="d2_age")
-            if st.button("Check", key="d2_btn"):
-                try:
-                    age = int(age)
-                except:
-                    st.error("Invalid age")
-                else:
-                    st.success("Age accepted")
-
-            st.markdown("---")
-            ref_code_2 = """import streamlit as st
-
-st.title("Age Checker")
-age = st.text_input("Enter your age")
-
-if st.button("Check"):
-    try:
-        age = int(age)
-    except:
-        st.error("Invalid age")
-    else:
-        st.success("Age accepted")"""
-
-            with st.expander("View Reference Code", expanded=False):
-                st.code(ref_code_2, language="python")
-
-    with col_right:
-        with st.container(border=True):
-            st.subheader("Test Your Self")
-            user_code_2 = st.text_area("Your Code", value="", height=200, key="d2_sandbox")
-            
-            if "d2_has_run" not in st.session_state:
-                st.session_state.d2_has_run = False
-
-            if st.button("Run My Code", key="d2_run"):
-                st.session_state.d2_has_run = True
-
-            st.markdown("**Output of your code:**")
-            
-            with st.container(border=True):
-                if st.session_state.d2_has_run:
-                    execute_and_render(user_code_2, st.container())
-                else:
-                    st.info("Click 'Run My Code' to view output inside this frame.")
-
-elif demo_choice == "3. Name Submission (Finally Clause)":
-    st.title("Try Except Else Finally")
-    st.markdown(
-        "**Explanation:** The `finally` clause **always runs** regardless of whether an exception "
-        "was raised or caught. It is commonly used for cleanup actions, such as closing files "
-        "or logging 'Program End'."
-    )
-    st.markdown("---")
-    
-    col_left, col_right = st.columns(2)
-    
-    with col_left:
-        with st.container(border=True):
-            st.subheader("The Code")
-            name = st.text_input("Enter your name", key="d3_name")
-            if st.button("Submit", key="d3_btn"):
-                try:
-                    if name == "":
-                        raise ValueError
-                except:
-                    st.error("Please enter your name")
-                else:
-                    st.success("Welcome " + name)
-                finally:
-                    st.write("Program End")
-
-            st.markdown("---")
-            ref_code_3 = """import streamlit as st
-
-st.title("Try Except Else Finally")
-name = st.text_input("Enter your name")
-
-if st.button("Submit"):
-    try:
-        if name == "":
-            raise ValueError
-    except:
-        st.error("Please enter your name")
-    else:
-        st.success("Welcome " + name)
-    finally:
-        st.write("Program End")"""
-
-            with st.expander("View Reference Code", expanded=False):
-                st.code(ref_code_3, language="python")
-
-    with col_right:
-        with st.container(border=True):
-            st.subheader("Test Your Self")
-            user_code_3 = st.text_area("Your Code", value="", height=240, key="d3_sandbox")
-            
-            if "d3_has_run" not in st.session_state:
-                st.session_state.d3_has_run = False
-
-            if st.button("Run My Code", key="d3_run"):
-                st.session_state.d3_has_run = True
-
-            st.markdown("**Output of your code:**")
-            
-            with st.container(border=True):
-                if st.session_state.d3_has_run:
-                    execute_and_render(user_code_3, st.container())
-                else:
-                    st.info("Click 'Run My Code' to view output inside this frame.")
-
-elif demo_choice == "4. Email Validation (Custom Exception)":
-    st.title("Email Validation")
-    st.markdown(
-        "**Explanation:** Python allows raising custom exceptions manually using `raise ValueError('message')`. "
-        "The `except ValueError as e` block captures the exact error message string and displays it using Streamlit."
-    )
-    st.markdown("---")
-    
-    col_left, col_right = st.columns(2)
-    
-    with col_left:
-        with st.container(border=True):
-            st.subheader("The Code")
-            email = st.text_input("Enter Email", key="d4_email")
-            if st.button("Submit", key="d4_btn"):
-                try:
-                    if email == "":
-                        raise ValueError("Please Insert Email")
-                    elif "@" not in email:
-                        raise ValueError("Invalid Email")
-                except ValueError as e:
-                    st.error(e)
-                else:
-                    st.success("Email Accepted")
-                finally:
-                    st.info("Done")
-
-            st.markdown("---")
-            ref_code_4 = """import streamlit as st
-
-st.title("Email Validation")
-email = st.text_input("Enter Email")
-
-if st.button("Submit"):
-    try:
-        if email == "":
-            raise ValueError("Please Insert Email")
-        elif "@" not in email:
-            raise ValueError("Invalid Email")
-    except ValueError as e:
-        st.error(e)
-    else:
-        st.success("Email Accepted")
-    finally:
-        st.info("Done")"""
-
-            with st.expander("View Reference Code", expanded=False):
-                st.code(ref_code_4, language="python")
-
-    with col_right:
-        with st.container(border=True):
-            st.subheader("Test Your Self")
-            user_code_4 = st.text_area("Your Code", value="", height=260, key="d4_sandbox")
-            
-            if "d4_has_run" not in st.session_state:
-                st.session_state.d4_has_run = False
-
-            if st.button("Run My Code", key="d4_run"):
-                st.session_state.d4_has_run = True
-
-            st.markdown("**Output of your code:**")
-            
-            with st.container(border=True):
-                if st.session_state.d4_has_run:
-                    execute_and_render(user_code_4, st.container())
-                else:
-                    st.info("Click 'Run My Code' to view output inside this frame.")
+    st.info("Ready for your first topic! Please provide your curriculum materials or syllabus text/PDFs, and we will populate the modules accordingly.")
 
 # Footer Signature
 st.markdown('<div class="footer-text">Created by IsmaPY</div>', unsafe_allow_html=True)
