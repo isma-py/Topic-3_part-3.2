@@ -13,7 +13,7 @@ LOCAL_TZ = ZoneInfo("Asia/Kuala_Lumpur")
 
 # Page Configuration
 st.set_page_config(
-    page_title="Python Exam Preparation & Testing", 
+    page_title="Python Exam Preparation & Coding Lab", 
     layout="wide"
 )
 
@@ -166,7 +166,8 @@ def show_light_mode_dialog():
     )
     st.warning(
         "**Progress Tracking Notice:** This webpage does **not** have a database to store "
-        "your progress or quiz answers. Please remember to record your scores manually if needed!"
+        "your progress or code inputs. Please remember to log or record your progress "
+        "manually if needed!"
     )
     if st.button("I Understand & Proceed"):
         st.session_state.show_light_mode_modal = False
@@ -289,6 +290,22 @@ if st.session_state.show_light_mode_modal:
 # =========================================================
 # MAIN APP ENVIRONMENT (REACHABLE ONLY AFTER LOGIN)
 # =========================================================
+
+def execute_and_render(user_code, output_container):
+    buffer = io.StringIO()
+    sys.stdout = buffer
+    try:
+        with output_container:
+            exec_globals = {"st": st}
+            exec(user_code, exec_globals)
+            output = buffer.getvalue()
+            if output:
+                st.text_area("Console Output:", output, height=100, key=f"output_{datetime.now().timestamp()}")
+    except Exception as e:
+        output_container.error(f"Execution Error: {e}")
+    finally:
+        sys.stdout = sys.__stdout__
+
 
 # Sidebar Navigation & Topics Structure
 st.sidebar.title("Python")
@@ -559,7 +576,7 @@ st.sidebar.markdown("**Created by IsmaPY**")
 
 
 # =========================================================
-# Main Content Based on Selected Subtopic (Left: Notes | Right: Testing Quiz)
+# Main Content Based on Selected Subtopic (Left: Study Notes | Right: Coding Challenge & Assistant Lab)
 # =========================================================
 current_selection = st.session_state.get('current_subtopic', 'Course Overview')
 
@@ -568,10 +585,10 @@ if current_selection == "Course Overview":
     st.markdown(
         "**Welcome to your exam preparation platform!** "
         "Use the collapsible topics in the sidebar to navigate through individual subtopics, study notes, "
-        "and the **Understanding Quiz** on the right side of each page."
+        "and try the **Coding Challenges with Assistant Support** on the right side of each page."
     )
     st.markdown("---")
-    st.info("Topics 1, 2, 3, and 4 are fully loaded with study notes and interactive testing modules!")
+    st.info("Topics 1, 2, 3, and 4 are fully loaded with study notes and interactive coding labs!")
 
 elif current_selection == "1.1 Introduction & Identifiers":
     st.title("Topic 1.1: Introduction & Python Identifiers")
@@ -596,14 +613,19 @@ elif current_selection == "1.1 Introduction & Identifiers":
     
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 1.1")
-            st.markdown("Test your knowledge on identifiers and syntax rules:")
-            q1 = st.radio("Which of the following is a valid Python keyword that cannot be used as an identifier?", ["name", "class", "value", "total"], key="q1_1")
-            if st.button("Check Answer", key="btn_q1_1"):
-                if q1 == "class":
-                    st.success("Correct! `class` is a reserved keyword in Python[cite: 9].")
-                else:
-                    st.error("Incorrect. `class` is a reserved keyword[cite: 9].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Write code from scratch to create a variable `empName` with your name, a variable `age` as an integer, cast `age` to a string using `str()`, and print both along with the type of the casted age.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** Assign string values using quotes: `empName = "Ali"`
+                * **Hint 2:** Cast an integer variable `x` to string using `str(x)`
+                * **Hint 3:** Use `print()` to output variables and `type()` to check data types.
+                """)
+            
+            user_code_11 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_11")
+            if st.button("Run & Test Code", key="run_c_11"):
+                execute_and_render(user_code_11, st.container())
 
 elif current_selection == "1.2 Data Structures (Collections)":
     st.title("Topic 1.2: Python Data Structures (Collection Types)")
@@ -627,14 +649,19 @@ elif current_selection == "1.2 Data Structures (Collections)":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 1.2")
-            st.markdown("Test your knowledge on Python collections:")
-            q2 = st.radio("Which collection type is ordered and immutable?", ["List []", "Tuple ()", "Dictionary {}", "Set {}"], key="q1_2")
-            if st.button("Check Answer", key="btn_q1_2"):
-                if q2 == "Tuple ()":
-                    st.success("Correct! Tuples are ordered and immutable collections defined with parentheses[cite: 24, 25].")
-                else:
-                    st.error("Incorrect. Tuples are immutable, unlike lists or dictionaries[cite: 25, 36].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Create a list of 3 fruits, append a 4th fruit using `.append()`, and create a dictionary with student info (`Name` and `Score`) and print them.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** Lists use square brackets: `my_list = ["apple", "banana", "grape"]`
+                * **Hint 2:** Add items to a list with `my_list.append("orange")`
+                * **Hint 3:** Dictionaries use key-value pairs: `my_dict = {"Name": "Siti", "Score": 95}`
+                """)
+            
+            user_code_12 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_12")
+            if st.button("Run & Test Code", key="run_c_12"):
+                execute_and_render(user_code_12, st.container())
 
 elif current_selection == "1.3 Types of Operators":
     st.title("Topic 1.3: Types of Operators")
@@ -658,14 +685,19 @@ elif current_selection == "1.3 Types of Operators":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 1.3")
-            st.markdown("Test your knowledge on operators:")
-            q3 = st.radio("What does the floor division operator (`//`) do?", ["Returns remainder", "Performs exponentiation", "Rounds down division to nearest integer", "Returns float division"], key="q1_3")
-            if st.button("Check Answer", key="btn_q1_3"):
-                if q3 == "Rounds down division to nearest integer":
-                    st.success("Correct! Floor division (`//`) divides operands and floors the result to the nearest integer[cite: 89].")
-                else:
-                    st.error("Incorrect. Floor division (`//`) performs integer division rounding down[cite: 89].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Define two variables `a = 15` and `b = 4`. Calculate and print their floor division (`//`), modulus (`%`), and test if `a > 10 and b < 10`.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** Floor division uses `//`
+                * **Hint 2:** Modulus remainder uses `%`
+                * **Hint 3:** Combine comparison conditions using logical `and`
+                """)
+            
+            user_code_13 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_13")
+            if st.button("Run & Test Code", key="run_c_13"):
+                execute_and_render(user_code_13, st.container())
 
 elif current_selection == "1.4 Control Structures & Loops":
     st.title("Topic 1.4: Control Structures & Loops")
@@ -689,14 +721,18 @@ elif current_selection == "1.4 Control Structures & Loops":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 1.4")
-            st.markdown("Test your knowledge on control statements:")
-            q4 = st.radio("Which control statement skips the current iteration and proceeds to the next?", ["break", "continue", "pass", "exit"], key="q1_4")
-            if st.button("Check Answer", key="btn_q1_4"):
-                if q4 == "continue":
-                    st.success("Correct! `continue` skips the current iteration and jumps to the next loop cycle[cite: 78, 83].")
-                else:
-                    st.error("Incorrect. `continue` is used to skip the current iteration[cite: 83].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Write a `for` loop from 1 to 5 using `range(1, 6)`. If the number is 3, use `continue` to skip it. Otherwise, print the number.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `for i in range(1, 6):` loops from 1 to 5.
+                * **Hint 2:** Inside the loop, check `if i == 3:` then `continue`
+                """)
+            
+            user_code_14 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_14")
+            if st.button("Run & Test Code", key="run_c_14"):
+                execute_and_render(user_code_14, st.container())
 
 elif current_selection == "2.1 Functions & Arguments":
     st.title("Topic 2.1: Functions & Arguments")
@@ -719,14 +755,18 @@ elif current_selection == "2.1 Functions & Arguments":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 2.1")
-            st.markdown("Test your knowledge on functions:")
-            q5 = st.radio("Which symbol is used for arbitrary arguments in Python functions?", ["&", "*", "#", "%"], key="q2_1")
-            if st.button("Check Answer", key="btn_q2_1"):
-                if q5 == "*":
-                    st.success("Correct! `*args` allows passing a variable number of positional arguments[cite: 121].")
-                else:
-                    st.error("Incorrect. `*` is used for arbitrary arguments (`*args`)[cite: 121].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Define a function named `calc_rectangle(length, width=10)` that calculates and returns the area of a rectangle. Test it with and without providing the width.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** Use `def calc_rectangle(length, width=10):`
+                * **Hint 2:** Return the product: `return length * width`
+                """)
+            
+            user_code_21 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_21")
+            if st.button("Run & Test Code", key="run_c_21"):
+                execute_and_render(user_code_21, st.container())
 
 elif current_selection == "2.2 Classes & Objects":
     st.title("Topic 2.2: Classes & Objects")
@@ -748,14 +788,18 @@ elif current_selection == "2.2 Classes & Objects":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 2.2")
-            st.markdown("Test your knowledge on classes and objects:")
-            q6 = st.radio("What is the name of the constructor method in Python classes?", ["__main__", "__init__", "__start__", "__new_obj__"], key="q2_2")
-            if st.button("Check Answer", key="btn_q2_2"):
-                if q6 == "__init__":
-                    st.success("Correct! `__init__` is the standard constructor method in Python classes[cite: 174, 176].")
-                else:
-                    st.error("Incorrect. `__init__` is used to initialize object attributes[cite: 176].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Create a class named `Student` with an `__init__` constructor taking `name` and `matric`. Add a method `display()` that prints student details, then instantiate and call it.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** Define class: `class Student:`
+                * **Hint 2:** Add constructor: `def __init__(self, name, matric):` and assign `self.name = name`
+                """)
+            
+            user_code_22 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_22")
+            if st.button("Run & Test Code", key="run_c_22"):
+                execute_and_render(user_code_22, st.container())
 
 elif current_selection == "2.3 Modules & Import":
     st.title("Topic 2.3: Modules & Import")
@@ -779,14 +823,18 @@ elif current_selection == "2.3 Modules & Import":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 2.3")
-            st.markdown("Test your knowledge on modules:")
-            q7 = st.radio("How do you import a specific function from a module in Python?", ["include module.function", "import module.function", "from module import function", "get module function"], key="q2_3")
-            if st.button("Check Answer", key="btn_q2_3"):
-                if q7 == "from module import function":
-                    st.success("Correct! `from module import name` imports specific attributes or functions directly[cite: 146].")
-                else:
-                    st.error("Incorrect. The correct syntax is `from module import name`[cite: 146].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Import the `random` module, generate a random integer between 1 and 10 using `random.randint()`, and print the result.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `import random`
+                * **Hint 2:** `val = random.randint(1, 10)`
+                """)
+            
+            user_code_23 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_23")
+            if st.button("Run & Test Code", key="run_c_23"):
+                execute_and_render(user_code_23, st.container())
 
 elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymorphism)":
     st.title("Topic 2.4: Core OOP Concepts")
@@ -808,14 +856,18 @@ elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymor
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 2.4")
-            st.markdown("Test your knowledge on OOP principles:")
-            q8 = st.radio("Which OOP principle restricts direct access to data using private attributes (`__attribute`)?", ["Inheritance", "Polymorphism", "Encapsulation", "Abstraction"], key="q2_4")
-            if st.button("Check Answer", key="btn_q2_4"):
-                if q8 == "Encapsulation":
-                    st.success("Correct! Encapsulation restricts direct data access to protect object state[cite: 159].")
-                else:
-                    st.error("Incorrect. Encapsulation is responsible for data hiding/restricting access[cite: 159].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Create a parent class `Device` with a method `power_on()`, and a child class `Router` that inherits from `Device` and overrides `power_on()` to print 'Router booting up'. Test it.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `class Router(Device):`
+                * **Hint 2:** Define matching method name in child class to override.
+                """)
+            
+            user_code_24 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_24")
+            if st.button("Run & Test Code", key="run_c_24"):
+                execute_and_render(user_code_24, st.container())
 
 elif current_selection == "2.5 Magic Methods":
     st.title("Topic 2.5: Magic Methods")
@@ -839,14 +891,18 @@ elif current_selection == "2.5 Magic Methods":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 2.5")
-            st.markdown("Test your knowledge on magic methods:")
-            q9 = st.radio("Which magic method defines the behavior of the addition operator (`+`)?", ["__init__", "__add__", "__str__", "__sum__"], key="q2_5")
-            if st.button("Check Answer", key="btn_q2_5"):
-                if q9 == "__add__":
-                    st.success("Correct! `__add__` overloads the `+` operator for custom objects[cite: 129, 132].")
-                else:
-                    st.error("Incorrect. `__add__` is used for the addition operator[cite: 132].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Create a class `Book` with `__init__` for `title` and `pages`. Implement `__str__` to return a formatted string like 'Book: [Title], Pages: [Pages]' and print an instance.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `def __str__(self):`
+                * **Hint 2:** Return string using `return f"Book: {self.title}"`
+                """)
+            
+            user_code_25 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_25")
+            if st.button("Run & Test Code", key="run_c_25"):
+                execute_and_render(user_code_25, st.container())
 
 elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
     st.title("Topic 3.1: Introduction to GUI & Streamlit UI")
@@ -869,14 +925,18 @@ elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 3.1")
-            st.markdown("Test your knowledge on Streamlit execution:")
-            q10 = st.radio("What command is used in the terminal to run a Streamlit app script?", ["python app.py", "streamlit run app.py", "start streamlit app.py", "run streamlit"], key="q3_1")
-            if st.button("Check Answer", key="btn_q3_1"):
-                if q10 == "streamlit run app.py":
-                    st.success("Correct! `streamlit run app.py` launches the application in your web browser[cite: 188].")
-                else:
-                    st.error("Incorrect. Streamlit apps are launched using `streamlit run app.py`[cite: 188].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Write Streamlit commands to display a title `st.title('Exam Dashboard')` and a success box `st.success('Ready for exam!')`.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `st.title("Your Title Here")`
+                * **Hint 2:** `st.success("Your message here")`
+                """)
+            
+            user_code_31 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_31")
+            if st.button("Run & Test Code", key="run_c_31"):
+                execute_and_render(user_code_31, st.container())
 
 elif current_selection == "3.2 User Events & Interactive Widgets":
     st.title("Topic 3.2: User Events & Interactive Widgets")
@@ -899,14 +959,18 @@ elif current_selection == "3.2 User Events & Interactive Widgets":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 3.2")
-            st.markdown("Test your knowledge on Streamlit widgets:")
-            q11 = st.radio("How does Streamlit respond when a user interacts with a widget?", ["Nothing happens until page refresh", "It automatically reruns the Python script", "It opens a new tab", "It prompts for password"], key="q3_2")
-            if st.button("Check Answer", key="btn_q3_2"):
-                if q11 == "It automatically reruns the Python script":
-                    st.success("Correct! Streamlit automatically updates and reruns whenever a widget is interacted with[cite: 193].")
-                else:
-                    st.error("Incorrect. Streamlit automatically reruns the script on widget interaction[cite: 193].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Use `st.text_input` to capture a student's username into a variable `username` and display a greeting if `username` is not empty.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `username = st.text_input("Enter name:")`
+                * **Hint 2:** `if username: st.write(f"Hello {username}")`
+                """)
+            
+            user_code_32 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_32")
+            if st.button("Run & Test Code", key="run_c_32"):
+                execute_and_render(user_code_32, st.container())
 
 elif current_selection == "3.3 Exception Handling (Try & Except)":
     st.title("Topic 3.3: Exception Handling (Try & Except)")
@@ -927,14 +991,18 @@ elif current_selection == "3.3 Exception Handling (Try & Except)":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 3.3")
-            st.markdown("Test your knowledge on exception handling:")
-            q12 = st.radio("When does the code inside an `except` block execute?", ["Always", "When there is no error in the try block", "Whenever an error occurs in the preceding try block", "Only at the end of the script"], key="q3_3")
-            if st.button("Check Answer", key="btn_q3_3"):
-                if q12 == "Whenever an error occurs in the preceding try block":
-                    st.success("Correct! The `except` block executes whenever an error occurs in the `try` block[cite: 204].")
-                else:
-                    st.error("Incorrect. The `except` block handles errors encountered in the `try` block[cite: 204].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Write a `try..except` block that attempts to convert an invalid string `"xyz"` into an integer, catching the `ValueError` and printing a custom error message.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `try: int("xyz")`
+                * **Hint 2:** `except ValueError: print("Caught invalid number format!")`
+                """)
+            
+            user_code_33 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_33")
+            if st.button("Run & Test Code", key="run_c_33"):
+                execute_and_render(user_code_33, st.container())
 
 elif current_selection == "3.4 Exception Handling (Else & Finally)":
     st.title("Topic 3.4: Exception Handling (Else & Finally)")
@@ -955,14 +1023,17 @@ elif current_selection == "3.4 Exception Handling (Else & Finally)":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 3.4")
-            st.markdown("Test your knowledge on `else` and `finally`:")
-            q13 = st.radio("Which block is guaranteed to run regardless of whether an exception occurs or not?", ["try", "except", "else", "finally"], key="q3_4")
-            if st.button("Check Answer", key="btn_q3_4"):
-                if q13 == "finally":
-                    st.success("Correct! The `finally` block executes regardless of whether an error occurred[cite: 210].")
-                else:
-                    st.error("Incorrect. The `finally` block executes unconditionally[cite: 210].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Write a full `try..except..else..finally` block that divides 10 by 2 safely, prints success in `else`, and prints completion in `finally`.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** Structure: `try: ... except: ... else: ... finally: ...`
+                """)
+            
+            user_code_34 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_34")
+            if st.button("Run & Test Code", key="run_c_34"):
+                execute_and_render(user_code_34, st.container())
 
 elif current_selection == "4.1 NumPy ndarray & Creation Routines":
     st.title("Topic 4.1: NumPy ndarray & Creation Routines")
@@ -988,14 +1059,18 @@ elif current_selection == "4.1 NumPy ndarray & Creation Routines":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 4.1")
-            st.markdown("Test your knowledge on NumPy arrays:")
-            q14 = st.radio("Why are NumPy `ndarray` objects faster than standard Python lists?", ["They use less RAM", "They are stored in contiguous memory", "They only hold strings", "They run on multiple computers"], key="q4_1")
-            if st.button("Check Answer", key="btn_q4_1"):
-                if q14 == "They are stored in contiguous memory":
-                    st.success("Correct! NumPy arrays are faster and more efficient because data is stored in contiguous memory[cite: 226].")
-                else:
-                    st.error("Incorrect. Contiguous memory allocation makes NumPy arrays faster[cite: 226].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Import `numpy as np`, create a 2D array with values `[[1, 2], [3, 4]]`, and print its `.shape` and `.size`.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `import numpy as np`
+                * **Hint 2:** `arr = np.array([[1, 2], [3, 4]])` then `print(arr.shape, arr.size)`
+                """)
+            
+            user_code_41 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_41")
+            if st.button("Run & Test Code", key="run_c_41"):
+                execute_and_render(user_code_41, st.container())
 
 elif current_selection == "4.2 Indexing, Slicing & Array Manipulation":
     st.title("Topic 4.2: Indexing, Slicing & Array Manipulation")
@@ -1020,14 +1095,18 @@ elif current_selection == "4.2 Indexing, Slicing & Array Manipulation":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 4.2")
-            st.markdown("Test your knowledge on array manipulation:")
-            q15 = st.radio("Which NumPy function changes an array's shape without modifying its underlying data?", ["flatten()", "reshape()", "transpose()", "resize()"], key="q4_2")
-            if st.button("Check Answer", key="btn_q4_2"):
-                if q15 == "reshape()":
-                    st.success("Correct! `reshape()` changes the array shape without changing the data[cite: 244, 245].")
-                else:
-                    st.error("Incorrect. `reshape()` is used to modify array dimensions[cite: 245].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Create a 1D array using `np.arange(1, 7)` and reshape it into a $2 \times 3$ 2D matrix using `.reshape(2, 3)`.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `arr = np.arange(1, 7)`
+                * **Hint 2:** `matrix = arr.reshape(2, 3)`
+                """)
+            
+            user_code_42 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_42")
+            if st.button("Run & Test Code", key="run_c_42"):
+                execute_and_render(user_code_42, st.container())
 
 elif current_selection == "4.3 Matplotlib Data Visualization":
     st.title("Topic 4.3: Matplotlib Data Visualization")
@@ -1051,14 +1130,18 @@ elif current_selection == "4.3 Matplotlib Data Visualization":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 4.3")
-            st.markdown("Test your knowledge on Matplotlib:")
-            q16 = st.radio("Which Matplotlib function displays grid lines on a graph for easier reading?", ["plt.show()", "plt.grid(True)", "plt.lines()", "plt.box()"], key="q4_3")
-            if st.button("Check Answer", key="btn_q4_3"):
-                if q16 == "plt.grid(True)":
-                    st.success("Correct! `plt.grid(True)` enables grid lines on the plot[cite: 222, 223].")
-                else:
-                    st.error("Incorrect. `plt.grid(True)` is used to display grid lines[cite: 223].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Setup x and y data arrays using NumPy (`x = [1, 2, 3, 4]`, `y = [10, 20, 25, 30]`) and prepare the Matplotlib plot structure (`plt.plot(x, y)`).")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `import matplotlib.pyplot as plt`
+                * **Hint 2:** `plt.plot(x, y)`
+                """)
+            
+            user_code_43 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_43")
+            if st.button("Run & Test Code", key="run_c_43"):
+                execute_and_render(user_code_43, st.container())
 
 elif current_selection == "4.4 Pandas Series & DataFrames":
     st.title("Topic 4.4: Pandas Series & DataFrames")
@@ -1081,14 +1164,18 @@ elif current_selection == "4.4 Pandas Series & DataFrames":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 4.4")
-            st.markdown("Test your knowledge on Pandas structures:")
-            q17 = st.radio("What best describes a Pandas DataFrame?", ["A 1D labeled array", "A 2D table with labeled rows and columns", "An immutable tuple", "A 3D tensor"], key="q4_4")
-            if st.button("Check Answer", key="btn_q4_4"):
-                if q17 == "A 2D table with labeled rows and columns":
-                    st.success("Correct! A DataFrame is a 2D table-like structure with rows and columns similar to Excel[cite: 255, 260].")
-                else:
-                    st.error("Incorrect. DataFrames are 2D tabular data structures[cite: 260].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Import `pandas as pd`, create a DataFrame from a dictionary with columns `Name` and `Score`, and print the DataFrame.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `import pandas as pd`
+                * **Hint 2:** `df = pd.DataFrame({"Name": ["Ali", "Siti"], "Score": [88, 92]})`
+                """)
+            
+            user_code_44 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_44")
+            if st.button("Run & Test Code", key="run_c_44"):
+                execute_and_render(user_code_44, st.container())
 
 elif current_selection == "4.5 Pandas Data Pre-Processing":
     st.title("Topic 4.5: Pandas Data Pre-Processing")
@@ -1112,14 +1199,18 @@ elif current_selection == "4.5 Pandas Data Pre-Processing":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("🧠 Understanding Check: Quiz 4.5")
-            st.markdown("Test your knowledge on data pre-processing:")
-            q18 = st.radio("Which Pandas method is used to fill missing (`NaN`) values?", ["drop_duplicates()", "fillna()", "groupby()", "resample()"], key="q4_5")
-            if st.button("Check Answer", key="btn_q4_5"):
-                if q18 == "fillna()":
-                    st.success("Correct! `fillna()` is used to replace missing values with specified values or statistics[cite: 270].")
-                else:
-                    st.error("Incorrect. `fillna()` is used for handling missing values[cite: 270].")
+            st.subheader("Coding Challenge Lab")
+            st.markdown("**Task:** Create a DataFrame with duplicate rows, and use `.drop_duplicates()` to clean the data and print the result.")
+            
+            with st.expander("Need Help? (Coding Assistant & Hints)"):
+                st.markdown("""
+                * **Hint 1:** `df = pd.DataFrame({"Item": ["Pen", "Book", "Pen"]})`
+                * **Hint 2:** `df_clean = df.drop_duplicates()`
+                """)
+            
+            user_code_45 = st.text_area("Type your code here:", value='# Write your code from scratch here\n', height=140, key="challenge_45")
+            if st.button("Run & Test Code", key="run_c_45"):
+                execute_and_render(user_code_45, st.container())
 
 # Footer Signature
 st.markdown('<div class="footer-text">Created by IsmaPY</div>', unsafe_allow_html=True)
