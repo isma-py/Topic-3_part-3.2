@@ -306,18 +306,19 @@ st.sidebar.subheader("Topics")
 
 st.sidebar.markdown("Select topic to start with:")
 
-# Define curriculum structure (Main Topics and their Sub-topics)
+# Define curriculum structure (Main Topics and their Sub-topics based on uploaded PDFs)
 curriculum = {
-    "Topic 1: Test": [
-        "1.1 Introduction to Testing",
-        "1.2 Assertions & Basic Checks"
-    ],
-    # You can add more topics and sub-topics here as you provide the PDFs
+    "Topic 1: Basics of Python Programming": [
+        "1.1 Introduction & Identifiers",
+        "1.2 Data Structures (Collections)",
+        "1.3 Types of Operators",
+        "1.4 Control Structures & Loops"
+    ]
 }
 
-# Render expandable main topics and subtopic buttons
+# Render expandable main topics and subtopic buttons in the sidebar
 for main_topic, subtopics in curriculum.items():
-    with st.sidebar.expander(main_topic, expanded=False):
+    with st.sidebar.expander(main_topic, expanded=True):
         for sub in subtopics:
             if st.button(sub, key=f"btn_{sub}"):
                 st.session_state.current_subtopic = sub
@@ -555,22 +556,119 @@ if current_selection == "Course Overview":
     st.markdown(
         "**Welcome to your 9-day exam preparation platform!** "
         "Use the collapsible topics in the sidebar to navigate through individual subtopics, study notes, "
-        "and interactive coding sandboxes."
+        "reference code, and interactive coding sandboxes."
     )
     st.markdown("---")
-    st.info("Ready to begin! Provide your curriculum or PDF documents for the upcoming topics so we can populate them into the tree.")
+    st.info("Topic 1 has been successfully loaded! Click on **1.1 Introduction & Identifiers** under Topic 1 in the sidebar to start reviewing.")
 
-elif current_selection == "1. Introduction to Testing":
-    st.title("Topic 1: Test - Introduction to Testing")
-    st.markdown("**Explanation:** Introduction concepts for testing in Python.")
+elif current_selection == "1.1 Introduction & Identifiers":
+    st.title("Topic 1.1: Introduction & Python Identifiers")
+    st.markdown(
+        "**Overview:** Python is a high-level, interpreted, general-purpose programming language created by Guido van Rossum in 1991[cite: 6]. "
+        "It is beginner-friendly, readable, cross-platform, and open source[cite: 6]."
+    )
     st.markdown("---")
-    # Subtopic content space
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Key Concepts & Rules")
+            st.markdown("""
+            * **Identifiers:** Names assigned to variables, methods, and other objects (e.g., `empName = "Siti Fatimah"`)[cite: 8].
+            * **Keywords:** Predefined reserved words with special meanings (e.g., `if`, `else`, `while`, `def`, `class`)[cite: 9]. Cannot be used as variable names[cite: 9].
+            * **Indentation:** Python uses indentation (spaces at the beginning of a line) to define code blocks instead of braces[cite: 10]. Missing indentation raises an `IndentationError`[cite: 10].
+            * **Multi-Line Statements:** Can span multiple lines using backslashes (`\\`), parentheses `()`, square brackets `[]`, braces `{}`, or triple quotes `\"\"\"`[cite: 11].
+            * **Multiple Statements:** Multiple statements can be written on a single line using a semicolon (`;`)[cite: 12].
+            * **Variables & Casting:** Variables don't need explicit type declaration[cite: 14]. Use casting functions like `int()`, `float()`, or `str()` if needed[cite: 14].
+            """)
+    
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_11 = st.text_area("Test Python Code:", value='empName = "Siti Fatimah"\nprint("Employee Name:", empName)\nx = str(3)\nprint("Casted type:", type(x))', height=180, key="sandbox_11")
+            if st.button("Run Code", key="run_11"):
+                execute_and_render(sandbox_code_11, st.container())
 
-elif current_selection == "1. Assertions & Basic Checks":
-    st.title("Topic 1: Test - Assertions & Basic Checks")
-    st.markdown("**Explanation:** Learning how to write basic checks and assertions.")
+elif current_selection == "1.2 Data Structures (Collections)":
+    st.title("Topic 1.2: Python Data Structures (Collection Types)")
+    st.markdown(
+        "**Overview:** Collection types represent a group of objects as a single unit[cite: 23]. Python includes built-in collection structures: "
+        "Tuples, Lists, Dictionaries, Sets, and Strings[cite: 20]."
+    )
     st.markdown("---")
-    # Subtopic content space
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Collection Summary")
+            st.markdown("""
+            * **Tuples (`()`):** Ordered and **immutable** (unchangeable) collection defined with parentheses[cite: 24, 25]. Supports positive and negative indexing[cite: 25, 26].
+            * **Lists (`[]`):** Ordered and **mutable** (changeable) containers[cite: 35, 36]. Supports adding (`append()`, `extend()`, `+`), inserting (`insert()`), removing (`remove()`, `pop()`), and deleting (`del`)[cite: 38, 42, 44, 48].
+            * **Dictionaries (`{}`):** Unordered, changeable collections of unique **key-value pairs**[cite: 50, 51]. Values are accessed via keys or `.get()`[cite: 52].
+            * **Sets (`{}`):** Unordered collections of **unique elements** (no duplicates)[cite: 57, 58]. Supports set operations like Union (`|`), Intersection (`&`), Difference (`-`), and Symmetric Difference (`^`)[cite: 64].
+            * **Strings:** Character sequences enclosed in single (`''`) or double (`\"\"\"`) quotes[cite: 66, 68].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_12 = st.text_area("Test Data Structures:", value='myTuple = (1, 3, 5, 7)\nprint("Tuple:", myTuple[0:2])\n\nmyList = ["apple", "banana"]\nmyList.append("cherry")\nprint("List:", myList)\n\nmyDict = {"Name": "Ali", "Age": 20}\nprint("Dictionary:", myDict["Name"])', height=180, key="sandbox_12")
+            if st.button("Run Code", key="run_12"):
+                execute_and_render(sandbox_code_12, st.container())
+
+elif current_selection == "1.3 Types of Operators":
+    st.title("Topic 1.3: Types of Operators")
+    st.markdown(
+        "**Overview:** Operators are special symbols used to perform operations on values and variables (operands)[cite: 88]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Operator Categories")
+            st.markdown("""
+            * **Arithmetic:** `+`, `-`, `*`, `/`, `%` (modulus), `**` (exponent), `//` (floor division)[cite: 89].
+            * **Comparison:** `<`, `<=`, `>`, `>=`, `==`, `!=` (return `True` or `False`)[cite: 91].
+            * **Assignment:** `=`, `+=`, `-=`, `*=`, `/=`, and bitwise assignment operators (`&=`, `|=`, `^=`, `>>=`, `<<=`)[cite: 93].
+            * **Logical:** `and`, `or`, `not`[cite: 99].
+            * **Membership:** `in`, `not in` (checks if value exists in a sequence)[cite: 101].
+            * **Identity:** `is`, `is not` (checks if two variables point to the same memory location)[cite: 103].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_13 = st.text_area("Test Operators:", value='a = 10\nb = 3\nprint("Arithmetic //:", a // b)\nprint("Logical:", (a < 2) or (b > 1))\nprint("Membership:", "a" in "apple")', height=180, key="sandbox_13")
+            if st.button("Run Code", key="run_13"):
+                execute_and_render(sandbox_code_13, st.container())
+
+elif current_selection == "1.4 Control Structures & Loops":
+    st.title("Topic 1.4: Control Structures & Loops")
+    st.markdown(
+        "**Overview:** Control structures allow a program to make decisions and repeat execution sequences based on conditions[cite: 73, 78]."
+    )
+    st.markdown("---")
+    
+    col_left, col_right = st.columns(2)
+    with col_left:
+        with st.container(border=True):
+            st.subheader("Decision Making & Looping")
+            st.markdown("""
+            * **Decision Making:** `if`, `if..else`, and `if..elif..else` statements[cite: 73].
+            * **While Loop:** Executes a block of statements as long as the test condition remains `True`[cite: 79].
+            * **For Loop:** Iterates over sequences (lists, tuples, dictionaries, sets, strings) or numeric ranges using `range()`[cite: 80].
+            * **Control Statements:**
+              * `break`: Terminates the loop immediately[cite: 78, 82].
+              * `continue`: Skips the current iteration and proceeds to the next[cite: 78, 83].
+            """)
+            
+    with col_right:
+        with st.container(border=True):
+            st.subheader("Interactive Code Sandbox")
+            sandbox_code_14 = st.text_area("Test Loops & Conditions:", value='for i in range(1, 4):\n    if i == 2:\n        continue\n    print("Number:", i)', height=180, key="sandbox_14")
+            if st.button("Run Code", key="run_14"):
+                execute_and_render(sandbox_code_14, st.container())
 
 # Footer Signature
 st.markdown('<div class="footer-text">Created by IsmaPY</div>', unsafe_allow_html=True)
