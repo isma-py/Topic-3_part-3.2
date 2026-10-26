@@ -146,6 +146,9 @@ if "last_login_time" not in st.session_state:
 if "last_bug_report_time" not in st.session_state:
     st.session_state.last_bug_report_time = None
 
+if "current_subtopic" not in st.session_state:
+    st.session_state.current_subtopic = "Course Overview"
+
 
 @st.dialog("Important Notice")
 def show_light_mode_dialog():
@@ -243,7 +246,6 @@ if not st.session_state.authenticated:
             
             student_name = st.text_input("Full Name:", key="student_name_input", placeholder="e.g. John Doe")
             
-            # Check if login is currently under a 3-minute cooldown
             now_login = datetime.now(LOCAL_TZ)
             login_on_cooldown = False
             login_remaining = 0
@@ -266,7 +268,7 @@ if not st.session_state.authenticated:
                     st.session_state.last_login_time = now
                     st.session_state.authenticated = True
                     st.session_state.student_name = student_name.strip()
-                    st.session_state.show_light_mode_modal = True  # Trigger modal upon login
+                    st.session_state.show_light_mode_modal = True  
                     st.rerun()
 
     st.stop()
@@ -281,7 +283,6 @@ if st.session_state.show_light_mode_modal:
 # MAIN APP ENVIRONMENT (REACHABLE ONLY AFTER LOGIN)
 # =========================================================
 
-# Helper function to execute custom user code inside a container
 def execute_and_render(user_code, output_container):
     buffer = io.StringIO()
     sys.stdout = buffer
@@ -298,17 +299,28 @@ def execute_and_render(user_code, output_container):
         sys.stdout = sys.__stdout__
 
 
-# Sidebar Navigation & Collapsible Sections
-st.sidebar.title("Python Study Tool")
+# Sidebar Navigation & Topics Structure
+st.sidebar.title("Python")
 st.sidebar.caption(f"Logged in as: **{st.session_state.get('student_name', 'Student')}**")
-st.sidebar.subheader("Exam Preparation Syllabus")
+st.sidebar.subheader("Topics")
 
-demo_choice = st.sidebar.radio(
-    "Select Module:",
-    [
-        "1. Course Overview & Introduction"
-    ]
-)
+st.sidebar.markdown("Select topic to start with:")
+
+# Define curriculum structure (Main Topics and their Sub-topics)
+curriculum = {
+    "Topic 1: Test": [
+        "1.1 Introduction to Testing",
+        "1.2 Assertions & Basic Checks"
+    ],
+    # You can add more topics and sub-topics here as you provide the PDFs
+}
+
+# Render expandable main topics and subtopic buttons
+for main_topic, subtopics in curriculum.items():
+    with st.sidebar.expander(main_topic, expanded=False):
+        for sub in subtopics:
+            if st.button(sub, key=f"btn_{sub}"):
+                st.session_state.current_subtopic = sub
 
 st.sidebar.markdown("---")
 
@@ -499,13 +511,12 @@ with st.sidebar.expander("Report Issues / Bug", expanded=False):
         key="bug_evidence_uploader"
     )
     
-    # Check if bug report is currently under a 3-minute cooldown
     now_bug = datetime.now(LOCAL_TZ)
     bug_on_cooldown = False
     bug_remaining = 0
     if st.session_state.last_bug_report_time is not None:
         elapsed_bug = (now_bug - st.session_state.last_bug_report_time).total_seconds()
-        if elapsed_bug < 180:  # 3 minutes = 180 seconds
+        if elapsed_bug < 180:  
             bug_on_cooldown = True
             bug_remaining = int(180 - elapsed_bug)
 
@@ -535,17 +546,31 @@ st.sidebar.markdown("**Created by IsmaPY**")
 
 
 # =========================================================
-# Demo Modules / Syllabus Content Placeholder
+# Main Content Based on Selected Subtopic
 # =========================================================
-if demo_choice == "1. Course Overview & Introduction":
+current_selection = st.session_state.get('current_subtopic', 'Course Overview')
+
+if current_selection == "Course Overview":
     st.title("Python Programming Exam Preparation")
     st.markdown(
         "**Welcome to your 9-day exam preparation platform!** "
-        "This tool is structured to help you review key programming concepts, test code snippets in real-time, "
-        "and prepare systematically for your upcoming evaluations."
+        "Use the collapsible topics in the sidebar to navigate through individual subtopics, study notes, "
+        "and interactive coding sandboxes."
     )
     st.markdown("---")
-    st.info("Ready for your first topic! Please provide your curriculum materials or syllabus text/PDFs, and we will populate the modules accordingly.")
+    st.info("Ready to begin! Provide your curriculum or PDF documents for the upcoming topics so we can populate them into the tree.")
+
+elif current_selection == "1. Introduction to Testing":
+    st.title("Topic 1: Test - Introduction to Testing")
+    st.markdown("**Explanation:** Introduction concepts for testing in Python.")
+    st.markdown("---")
+    # Subtopic content space
+
+elif current_selection == "1. Assertions & Basic Checks":
+    st.title("Topic 1: Test - Assertions & Basic Checks")
+    st.markdown("**Explanation:** Learning how to write basic checks and assertions.")
+    st.markdown("---")
+    # Subtopic content space
 
 # Footer Signature
 st.markdown('<div class="footer-text">Created by IsmaPY</div>', unsafe_allow_html=True)
