@@ -21,13 +21,14 @@ st.set_page_config(
 LOGIN_WEBHOOK_URL = "https://discord.com/api/webhooks/1552364753605886092/M_01xSCjvxShmz_coHn3ywRnRn6PTqf-LOxeVQq2kn7Wy-zHnndI_doa64x7_sAhjF1B"
 BUG_WEBHOOK_URL = "https://discord.com/api/webhooks/1552366425706987552/2fmHmPjquJ9yPCa2Hgb6naZFB0gsE1UfPuiZlh1zO38EMsyQWQq1bcgWhol75jICe-v8"
 
-# Cisco Networking Academy Style Light Theme
+# Cisco Networking Academy Style Light Theme with Left-Aligned Containers & Elements
 st.markdown("""
     <style>
     /* Global Page Background & Text - Light Theme */
     html, body, [data-testid="stAppViewContainer"], .stApp {
         background-color: #F8FAFC !important;
         color: #121820 !important;
+        text-align: left !important;
     }
     
     /* Header Banner */
@@ -40,28 +41,33 @@ st.markdown("""
         color: #121820 !important;
         font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         font-weight: 700;
+        text-align: left !important;
     }
 
-    /* Paragraphs & Labels */
-    p, label, span, div, .stMarkdown {
+    /* Paragraphs, Labels, and Markdown Text Alignment */
+    p, label, span, div, .stMarkdown, .stText {
         color: #334155 !important;
+        text-align: left !important;
     }
     
     /* Sidebar Styling */
     section[data-testid="stSidebar"] {
         background-color: #FFFFFF !important;
         border-right: 1px solid #E2E8F0;
+        text-align: left !important;
     }
     section[data-testid="stSidebar"] * {
         color: #121820 !important;
+        text-align: left !important;
     }
     
-    /* Frame Cards / Containers */
+    /* Frame Cards / Containers - Left Aligned */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background-color: #FFFFFF !important;
         border: 1px solid #E2E8F0 !important;
         border-radius: 12px !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        text-align: left !important;
     }
 
     /* Inputs & Text Areas */
@@ -71,6 +77,7 @@ st.markdown("""
         border: 1px solid #CBD5E1 !important;
         border-radius: 8px !important;
         font-family: 'Fira Code', 'Courier New', monospace !important;
+        text-align: left !important;
     }
     .stTextInput input:focus, .stTextArea textarea:focus {
         border-color: #6CC24A !important;
@@ -82,6 +89,7 @@ st.markdown("""
         background-color: #F8FAFC !important;
         border: 1px solid #E2E8F0 !important;
         border-radius: 8px !important;
+        text-align: left !important;
     }
 
     /* Cisco Signature Green Buttons */
@@ -94,7 +102,7 @@ st.markdown("""
         padding: 0.5rem 1rem !important;
         transition: all 0.2s ease !important;
         width: 100% !important;
-        text-align: center !important;
+        text-align: left !important;
         text-decoration: none !important;
         display: block !important;
     }
@@ -388,6 +396,7 @@ with st.sidebar.expander("Music Section", expanded=False):
             font-weight: 500;
             color: #334155;
             margin-bottom: 6px;
+            text-align: left;
           }}
 
           input[type="range"]#volumeSlider {{
