@@ -13,7 +13,7 @@ LOCAL_TZ = ZoneInfo("Asia/Kuala_Lumpur")
 
 # Page Configuration
 st.set_page_config(
-    page_title="Python Exam Preparation", 
+    page_title="Python Exam Preparation & Testing", 
     layout="wide"
 )
 
@@ -166,8 +166,7 @@ def show_light_mode_dialog():
     )
     st.warning(
         "**Progress Tracking Notice:** This webpage does **not** have a database to store "
-        "your progress or code inputs. Please remember to log or record your progress "
-        "manually if needed!"
+        "your progress or quiz answers. Please remember to record your scores manually if needed!"
     )
     if st.button("I Understand & Proceed"):
         st.session_state.show_light_mode_modal = False
@@ -290,22 +289,6 @@ if st.session_state.show_light_mode_modal:
 # =========================================================
 # MAIN APP ENVIRONMENT (REACHABLE ONLY AFTER LOGIN)
 # =========================================================
-
-def execute_and_render(user_code, output_container):
-    buffer = io.StringIO()
-    sys.stdout = buffer
-    try:
-        with output_container:
-            exec_globals = {"st": st}
-            exec(user_code, exec_globals)
-            output = buffer.getvalue()
-            if output:
-                st.text_area("Console Output:", output, height=100)
-    except Exception as e:
-        output_container.error(f"Execution Error: {e}")
-    finally:
-        sys.stdout = sys.__stdout__
-
 
 # Sidebar Navigation & Topics Structure
 st.sidebar.title("Python")
@@ -576,7 +559,7 @@ st.sidebar.markdown("**Created by IsmaPY**")
 
 
 # =========================================================
-# Main Content Based on Selected Subtopic
+# Main Content Based on Selected Subtopic (Left: Notes | Right: Testing Quiz)
 # =========================================================
 current_selection = st.session_state.get('current_subtopic', 'Course Overview')
 
@@ -585,10 +568,10 @@ if current_selection == "Course Overview":
     st.markdown(
         "**Welcome to your exam preparation platform!** "
         "Use the collapsible topics in the sidebar to navigate through individual subtopics, study notes, "
-        "reference code, and interactive coding sandboxes."
+        "and the **Understanding Quiz** on the right side of each page."
     )
     st.markdown("---")
-    st.info("Topics 1, 2, 3, and 4 are fully loaded! Choose a subtopic from the sidebar to begin your review.")
+    st.info("Topics 1, 2, 3, and 4 are fully loaded with study notes and interactive testing modules!")
 
 elif current_selection == "1.1 Introduction & Identifiers":
     st.title("Topic 1.1: Introduction & Python Identifiers")
@@ -613,10 +596,14 @@ elif current_selection == "1.1 Introduction & Identifiers":
     
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_11 = st.text_area("Test Python Code:", value='empName = "Siti Fatimah"\nprint("Employee Name:", empName)\nx = str(3)\nprint("Casted type:", type(x))', height=180, key="sandbox_11")
-            if st.button("Run Code", key="run_11"):
-                execute_and_render(sandbox_code_11, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 1.1")
+            st.markdown("Test your knowledge on identifiers and syntax rules:")
+            q1 = st.radio("Which of the following is a valid Python keyword that cannot be used as an identifier?", ["name", "class", "value", "total"], key="q1_1")
+            if st.button("Check Answer", key="btn_q1_1"):
+                if q1 == "class":
+                    st.success("Correct! `class` is a reserved keyword in Python[cite: 9].")
+                else:
+                    st.error("Incorrect. `class` is a reserved keyword[cite: 9].")
 
 elif current_selection == "1.2 Data Structures (Collections)":
     st.title("Topic 1.2: Python Data Structures (Collection Types)")
@@ -640,10 +627,14 @@ elif current_selection == "1.2 Data Structures (Collections)":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_12 = st.text_area("Test Data Structures:", value='myTuple = (1, 3, 5, 7)\nprint("Tuple:", myTuple[0:2])\n\nmyList = ["apple", "banana"]\nmyList.append("cherry")\nprint("List:", myList)\n\nmyDict = {"Name": "Ali", "Age": 20}\nprint("Dictionary:", myDict["Name"])', height=180, key="sandbox_12")
-            if st.button("Run Code", key="run_12"):
-                execute_and_render(sandbox_code_12, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 1.2")
+            st.markdown("Test your knowledge on Python collections:")
+            q2 = st.radio("Which collection type is ordered and immutable?", ["List []", "Tuple ()", "Dictionary {}", "Set {}"], key="q1_2")
+            if st.button("Check Answer", key="btn_q1_2"):
+                if q2 == "Tuple ()":
+                    st.success("Correct! Tuples are ordered and immutable collections defined with parentheses[cite: 24, 25].")
+                else:
+                    st.error("Incorrect. Tuples are immutable, unlike lists or dictionaries[cite: 25, 36].")
 
 elif current_selection == "1.3 Types of Operators":
     st.title("Topic 1.3: Types of Operators")
@@ -667,10 +658,14 @@ elif current_selection == "1.3 Types of Operators":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_13 = st.text_area("Test Operators:", value='a = 10\nb = 3\nprint("Arithmetic //:", a // b)\nprint("Logical:", (a < 2) or (b > 1))\nprint("Membership:", "a" in "apple")', height=180, key="sandbox_13")
-            if st.button("Run Code", key="run_13"):
-                execute_and_render(sandbox_code_13, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 1.3")
+            st.markdown("Test your knowledge on operators:")
+            q3 = st.radio("What does the floor division operator (`//`) do?", ["Returns remainder", "Performs exponentiation", "Rounds down division to nearest integer", "Returns float division"], key="q1_3")
+            if st.button("Check Answer", key="btn_q1_3"):
+                if q3 == "Rounds down division to nearest integer":
+                    st.success("Correct! Floor division (`//`) divides operands and floors the result to the nearest integer[cite: 89].")
+                else:
+                    st.error("Incorrect. Floor division (`//`) performs integer division rounding down[cite: 89].")
 
 elif current_selection == "1.4 Control Structures & Loops":
     st.title("Topic 1.4: Control Structures & Loops")
@@ -694,10 +689,14 @@ elif current_selection == "1.4 Control Structures & Loops":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_14 = st.text_area("Test Loops & Conditions:", value='for i in range(1, 4):\n    if i == 2:\n        continue\n    print("Number:", i)', height=180, key="sandbox_14")
-            if st.button("Run Code", key="run_14"):
-                execute_and_render(sandbox_code_14, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 1.4")
+            st.markdown("Test your knowledge on control statements:")
+            q4 = st.radio("Which control statement skips the current iteration and proceeds to the next?", ["break", "continue", "pass", "exit"], key="q1_4")
+            if st.button("Check Answer", key="btn_q1_4"):
+                if q4 == "continue":
+                    st.success("Correct! `continue` skips the current iteration and jumps to the next loop cycle[cite: 78, 83].")
+                else:
+                    st.error("Incorrect. `continue` is used to skip the current iteration[cite: 83].")
 
 elif current_selection == "2.1 Functions & Arguments":
     st.title("Topic 2.1: Functions & Arguments")
@@ -720,10 +719,14 @@ elif current_selection == "2.1 Functions & Arguments":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_21 = st.text_area("Test Functions:", value='def add_numbers(a, b=5):\n    return a + b\n\nprint("Result 1:", add_numbers(3))\nprint("Result 2:", add_numbers(3, 10))', height=180, key="sandbox_21")
-            if st.button("Run Code", key="run_21"):
-                execute_and_render(sandbox_code_21, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 2.1")
+            st.markdown("Test your knowledge on functions:")
+            q5 = st.radio("Which symbol is used for arbitrary arguments in Python functions?", ["&", "*", "#", "%"], key="q2_1")
+            if st.button("Check Answer", key="btn_q2_1"):
+                if q5 == "*":
+                    st.success("Correct! `*args` allows passing a variable number of positional arguments[cite: 121].")
+                else:
+                    st.error("Incorrect. `*` is used for arbitrary arguments (`*args`)[cite: 121].")
 
 elif current_selection == "2.2 Classes & Objects":
     st.title("Topic 2.2: Classes & Objects")
@@ -745,10 +748,14 @@ elif current_selection == "2.2 Classes & Objects":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_22 = st.text_area("Test Classes & Objects:", value='class Car:\n    def __init__(self, brand):\n        self.brand = brand\n    def show(self):\n        print("Car brand:", self.brand)\n\nc = Car("Honda")\nc.show()', height=180, key="sandbox_22")
-            if st.button("Run Code", key="run_22"):
-                execute_and_render(sandbox_code_22, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 2.2")
+            st.markdown("Test your knowledge on classes and objects:")
+            q6 = st.radio("What is the name of the constructor method in Python classes?", ["__main__", "__init__", "__start__", "__new_obj__"], key="q2_2")
+            if st.button("Check Answer", key="btn_q2_2"):
+                if q6 == "__init__":
+                    st.success("Correct! `__init__` is the standard constructor method in Python classes[cite: 174, 176].")
+                else:
+                    st.error("Incorrect. `__init__` is used to initialize object attributes[cite: 176].")
 
 elif current_selection == "2.3 Modules & Import":
     st.title("Topic 2.3: Modules & Import")
@@ -772,10 +779,14 @@ elif current_selection == "2.3 Modules & Import":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_23 = st.text_area("Test Modules:", value='import math\nprint("Square root of 25:", math.sqrt(25))', height=180, key="sandbox_23")
-            if st.button("Run Code", key="run_23"):
-                execute_and_render(sandbox_code_23, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 2.3")
+            st.markdown("Test your knowledge on modules:")
+            q7 = st.radio("How do you import a specific function from a module in Python?", ["include module.function", "import module.function", "from module import function", "get module function"], key="q2_3")
+            if st.button("Check Answer", key="btn_q2_3"):
+                if q7 == "from module import function":
+                    st.success("Correct! `from module import name` imports specific attributes or functions directly[cite: 146].")
+                else:
+                    st.error("Incorrect. The correct syntax is `from module import name`[cite: 146].")
 
 elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymorphism)":
     st.title("Topic 2.4: Core OOP Concepts")
@@ -797,10 +808,14 @@ elif current_selection == "2.4 OOP Concepts (Inheritance, Encapsulation, Polymor
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_24 = st.text_area("Test OOP Concepts:", value='class Animal:\n    def speak(self):\n        print("Animal speaks")\n\nclass Dog(Animal):\n    def speak(self):\n        print("Dog barks")\n\nd = Dog()\nd.speak()', height=180, key="sandbox_24")
-            if st.button("Run Code", key="run_24"):
-                execute_and_render(sandbox_code_24, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 2.4")
+            st.markdown("Test your knowledge on OOP principles:")
+            q8 = st.radio("Which OOP principle restricts direct access to data using private attributes (`__attribute`)?", ["Inheritance", "Polymorphism", "Encapsulation", "Abstraction"], key="q2_4")
+            if st.button("Check Answer", key="btn_q2_4"):
+                if q8 == "Encapsulation":
+                    st.success("Correct! Encapsulation restricts direct data access to protect object state[cite: 159].")
+                else:
+                    st.error("Incorrect. Encapsulation is responsible for data hiding/restricting access[cite: 159].")
 
 elif current_selection == "2.5 Magic Methods":
     st.title("Topic 2.5: Magic Methods")
@@ -824,10 +839,14 @@ elif current_selection == "2.5 Magic Methods":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_25 = st.text_area("Test Magic Methods:", value='class Point:\n    def __init__(self, x):\n        self.x = x\n    def __add__(self, other):\n        return Point(self.x + other.x)\n    def __str__(self):\n        return f"Point({self.x})"\n\np1 = Point(5)\np2 = Point(10)\nprint(p1 + p2)', height=180, key="sandbox_25")
-            if st.button("Run Code", key="run_25"):
-                execute_and_render(sandbox_code_25, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 2.5")
+            st.markdown("Test your knowledge on magic methods:")
+            q9 = st.radio("Which magic method defines the behavior of the addition operator (`+`)?", ["__init__", "__add__", "__str__", "__sum__"], key="q2_5")
+            if st.button("Check Answer", key="btn_q2_5"):
+                if q9 == "__add__":
+                    st.success("Correct! `__add__` overloads the `+` operator for custom objects[cite: 129, 132].")
+                else:
+                    st.error("Incorrect. `__add__` is used for the addition operator[cite: 132].")
 
 elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
     st.title("Topic 3.1: Introduction to GUI & Streamlit UI")
@@ -850,10 +869,14 @@ elif current_selection == "3.1 Introduction to GUI & Streamlit UI":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_31 = st.text_area("Test Streamlit UI Commands:", value='st.title("My First Streamlit App")\nst.write("Welcome to Streamlit!")\nname = "Nurul"\nst.success(f"Hello {name}!")', height=180, key="sandbox_31")
-            if st.button("Run Code", key="run_31"):
-                execute_and_render(sandbox_code_31, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 3.1")
+            st.markdown("Test your knowledge on Streamlit execution:")
+            q10 = st.radio("What command is used in the terminal to run a Streamlit app script?", ["python app.py", "streamlit run app.py", "start streamlit app.py", "run streamlit"], key="q3_1")
+            if st.button("Check Answer", key="btn_q3_1"):
+                if q10 == "streamlit run app.py":
+                    st.success("Correct! `streamlit run app.py` launches the application in your web browser[cite: 188].")
+                else:
+                    st.error("Incorrect. Streamlit apps are launched using `streamlit run app.py`[cite: 188].")
 
 elif current_selection == "3.2 User Events & Interactive Widgets":
     st.title("Topic 3.2: User Events & Interactive Widgets")
@@ -876,10 +899,14 @@ elif current_selection == "3.2 User Events & Interactive Widgets":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_32 = st.text_area("Test Widgets:", value='fruit = "Apple"\nprint("Selected fruit:", fruit)\nchoice = True\nif choice:\n    print("Option selected!")', height=180, key="sandbox_32")
-            if st.button("Run Code", key="run_32"):
-                execute_and_render(sandbox_code_32, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 3.2")
+            st.markdown("Test your knowledge on Streamlit widgets:")
+            q11 = st.radio("How does Streamlit respond when a user interacts with a widget?", ["Nothing happens until page refresh", "It automatically reruns the Python script", "It opens a new tab", "It prompts for password"], key="q3_2")
+            if st.button("Check Answer", key="btn_q3_2"):
+                if q11 == "It automatically reruns the Python script":
+                    st.success("Correct! Streamlit automatically updates and reruns whenever a widget is interacted with[cite: 193].")
+                else:
+                    st.error("Incorrect. Streamlit automatically reruns the script on widget interaction[cite: 193].")
 
 elif current_selection == "3.3 Exception Handling (Try & Except)":
     st.title("Topic 3.3: Exception Handling (Try & Except)")
@@ -900,10 +927,14 @@ elif current_selection == "3.3 Exception Handling (Try & Except)":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_33 = st.text_area("Test Try-Except:", value='try:\n    num = int("abc")\n    print(num)\nexcept ValueError:\n    print("Caught ValueError: Invalid number format.")', height=180, key="sandbox_33")
-            if st.button("Run Code", key="run_33"):
-                execute_and_render(sandbox_code_33, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 3.3")
+            st.markdown("Test your knowledge on exception handling:")
+            q12 = st.radio("When does the code inside an `except` block execute?", ["Always", "When there is no error in the try block", "Whenever an error occurs in the preceding try block", "Only at the end of the script"], key="q3_3")
+            if st.button("Check Answer", key="btn_q3_3"):
+                if q12 == "Whenever an error occurs in the preceding try block":
+                    st.success("Correct! The `except` block executes whenever an error occurs in the `try` block[cite: 204].")
+                else:
+                    st.error("Incorrect. The `except` block handles errors encountered in the `try` block[cite: 204].")
 
 elif current_selection == "3.4 Exception Handling (Else & Finally)":
     st.title("Topic 3.4: Exception Handling (Else & Finally)")
@@ -924,10 +955,14 @@ elif current_selection == "3.4 Exception Handling (Else & Finally)":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_34 = st.text_area("Test Else-Finally:", value='try:\n    result = 10 / 2\nexcept ZeroDivisionError:\n    print("Division by zero!")\nelse:\n    print("Success! Result:", result)\nfinally:\n    print("Execution complete.")', height=180, key="sandbox_34")
-            if st.button("Run Code", key="run_34"):
-                execute_and_render(sandbox_code_34, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 3.4")
+            st.markdown("Test your knowledge on `else` and `finally`:")
+            q13 = st.radio("Which block is guaranteed to run regardless of whether an exception occurs or not?", ["try", "except", "else", "finally"], key="q3_4")
+            if st.button("Check Answer", key="btn_q3_4"):
+                if q13 == "finally":
+                    st.success("Correct! The `finally` block executes regardless of whether an error occurred[cite: 210].")
+                else:
+                    st.error("Incorrect. The `finally` block executes unconditionally[cite: 210].")
 
 elif current_selection == "4.1 NumPy ndarray & Creation Routines":
     st.title("Topic 4.1: NumPy ndarray & Creation Routines")
@@ -953,10 +988,14 @@ elif current_selection == "4.1 NumPy ndarray & Creation Routines":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_41 = st.text_area("Test NumPy Array Creation:", value='import numpy as np\narr = np.array([[10, 20, 30], [40, 50, 60]])\nprint("Array Shape:", arr.shape)\nprint("Array Size:", arr.size)\nzeros = np.zeros((2, 2))\nprint("Zeros:\\n", zeros)', height=180, key="sandbox_41")
-            if st.button("Run Code", key="run_41"):
-                execute_and_render(sandbox_code_41, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 4.1")
+            st.markdown("Test your knowledge on NumPy arrays:")
+            q14 = st.radio("Why are NumPy `ndarray` objects faster than standard Python lists?", ["They use less RAM", "They are stored in contiguous memory", "They only hold strings", "They run on multiple computers"], key="q4_1")
+            if st.button("Check Answer", key="btn_q4_1"):
+                if q14 == "They are stored in contiguous memory":
+                    st.success("Correct! NumPy arrays are faster and more efficient because data is stored in contiguous memory[cite: 226].")
+                else:
+                    st.error("Incorrect. Contiguous memory allocation makes NumPy arrays faster[cite: 226].")
 
 elif current_selection == "4.2 Indexing, Slicing & Array Manipulation":
     st.title("Topic 4.2: Indexing, Slicing & Array Manipulation")
@@ -981,10 +1020,14 @@ elif current_selection == "4.2 Indexing, Slicing & Array Manipulation":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_42 = st.text_area("Test Indexing & Manipulation:", value='import numpy as np\narr = np.array([[1, 2, 3], [4, 5, 6]])\nprint("Element [0,1]:", arr[0, 1])\nprint("Reshaped:\\n", arr.reshape(3, 2))\nprint("Transposed:\\n", arr.T)', height=180, key="sandbox_42")
-            if st.button("Run Code", key="run_42"):
-                execute_and_render(sandbox_code_42, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 4.2")
+            st.markdown("Test your knowledge on array manipulation:")
+            q15 = st.radio("Which NumPy function changes an array's shape without modifying its underlying data?", ["flatten()", "reshape()", "transpose()", "resize()"], key="q4_2")
+            if st.button("Check Answer", key="btn_q4_2"):
+                if q15 == "reshape()":
+                    st.success("Correct! `reshape()` changes the array shape without changing the data[cite: 244, 245].")
+                else:
+                    st.error("Incorrect. `reshape()` is used to modify array dimensions[cite: 245].")
 
 elif current_selection == "4.3 Matplotlib Data Visualization":
     st.title("Topic 4.3: Matplotlib Data Visualization")
@@ -1008,10 +1051,14 @@ elif current_selection == "4.3 Matplotlib Data Visualization":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_43 = st.text_area("Test Matplotlib Code Structure:", value='import numpy as np\nimport matplotlib.pyplot as plt\nx = np.arange(0, 5, 1)\ny = x ** 2\nprint("X values:", x)\nprint("Y values:", y)\n# plt.plot(x, y)\n# plt.show()', height=180, key="sandbox_43")
-            if st.button("Run Code", key="run_43"):
-                execute_and_render(sandbox_code_43, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 4.3")
+            st.markdown("Test your knowledge on Matplotlib:")
+            q16 = st.radio("Which Matplotlib function displays grid lines on a graph for easier reading?", ["plt.show()", "plt.grid(True)", "plt.lines()", "plt.box()"], key="q4_3")
+            if st.button("Check Answer", key="btn_q4_3"):
+                if q16 == "plt.grid(True)":
+                    st.success("Correct! `plt.grid(True)` enables grid lines on the plot[cite: 222, 223].")
+                else:
+                    st.error("Incorrect. `plt.grid(True)` is used to display grid lines[cite: 223].")
 
 elif current_selection == "4.4 Pandas Series & DataFrames":
     st.title("Topic 4.4: Pandas Series & DataFrames")
@@ -1034,10 +1081,14 @@ elif current_selection == "4.4 Pandas Series & DataFrames":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_44 = st.text_area("Test Pandas Structures:", value='import pandas as pd\nscores = pd.Series([78, 85, 90], index=["Ali", "Siti", "John"])\nprint("Series:\\n", scores)\ndata = {"Name": ["Ali", "Siti"], "Math": [78, 85]}\ndf = pd.DataFrame(data)\nprint("\\nDataFrame:\\n", df)', height=180, key="sandbox_44")
-            if st.button("Run Code", key="run_44"):
-                execute_and_render(sandbox_code_44, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 4.4")
+            st.markdown("Test your knowledge on Pandas structures:")
+            q17 = st.radio("What best describes a Pandas DataFrame?", ["A 1D labeled array", "A 2D table with labeled rows and columns", "An immutable tuple", "A 3D tensor"], key="q4_4")
+            if st.button("Check Answer", key="btn_q4_4"):
+                if q17 == "A 2D table with labeled rows and columns":
+                    st.success("Correct! A DataFrame is a 2D table-like structure with rows and columns similar to Excel[cite: 255, 260].")
+                else:
+                    st.error("Incorrect. DataFrames are 2D tabular data structures[cite: 260].")
 
 elif current_selection == "4.5 Pandas Data Pre-Processing":
     st.title("Topic 4.5: Pandas Data Pre-Processing")
@@ -1061,10 +1112,14 @@ elif current_selection == "4.5 Pandas Data Pre-Processing":
             
     with col_right:
         with st.container(border=True):
-            st.subheader("Interactive Code Sandbox")
-            sandbox_code_45 = st.text_area("Test Pre-Processing:", value='import pandas as pd\ndf = pd.DataFrame({"Name": ["Ali", "Siti", "Ali"], "Math": [78, 85, 78]})\nprint("Before drop duplicates:\\n", df)\ndf = df.drop_duplicates()\nprint("\\nAfter drop duplicates:\\n", df)', height=180, key="sandbox_45")
-            if st.button("Run Code", key="run_45"):
-                execute_and_render(sandbox_code_45, st.container())
+            st.subheader("🧠 Understanding Check: Quiz 4.5")
+            st.markdown("Test your knowledge on data pre-processing:")
+            q18 = st.radio("Which Pandas method is used to fill missing (`NaN`) values?", ["drop_duplicates()", "fillna()", "groupby()", "resample()"], key="q4_5")
+            if st.button("Check Answer", key="btn_q4_5"):
+                if q18 == "fillna()":
+                    st.success("Correct! `fillna()` is used to replace missing values with specified values or statistics[cite: 270].")
+                else:
+                    st.error("Incorrect. `fillna()` is used for handling missing values[cite: 270].")
 
 # Footer Signature
 st.markdown('<div class="footer-text">Created by IsmaPY</div>', unsafe_allow_html=True)
